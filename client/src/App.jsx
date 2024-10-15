@@ -40,7 +40,7 @@ function AppRoutes() {
   }, [navigate]);
 
   return (
-    <div  className="flex h-screen flex-col">
+    <div  className="flex flex-col">
       <div
         style={{
           background:
