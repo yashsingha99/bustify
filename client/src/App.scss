@@ -1,0 +1,68 @@
+$font-01: "Barlow", sans-serif;
+$font-02: "Barlow Condensed", sans-serif;
+
+$m-01: #FB8A8A;
+$m-02: #FFEDC0;
+
+$bg-01: #695681;
+$bg-02: #36184F;
+$bg-03: #32243E;
+
+$g-01: linear-gradient(90deg, #FFEDC0 0%, #FF9D87 100%);
+$g-02: linear-gradient(90deg, #8077EA 13.7%, #EB73FF 94.65%);
+
+/* Global ::selection styling */
+::selection {
+  background-color: #0274ad; /* Light blue */
+  color: #ffffff; /* White text */
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+// html, body {
+//   margin: 0;
+//   padding: 0;
+//   height: 100%;
+//   overflow: hidden; /* Prevent body from scrolling */
+// }
+
+// .app-container {
+//   position: relative;
+// }
+
+// .scroll-container {
+//   flex-grow: 1;
+//   overflow-y: auto; /* Enable scrolling for page content */
+//   padding: 20px; /* Optional: Add padding for content */
+// }
+
+.link {
+  color: white;
+  text-transform: uppercase;
+  font-weight: 500;
+  position: relative;
+  transition: all 0.3s 0.2s ease;
+
+  &:before {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 4px;
+    background: $g-01; /* Reference the correct gradient variable */
+    bottom: -10px;
+    border-radius: 4px;
+    transition: all 0.4s cubic-bezier(0.82, 0.02, 0.13, 1.26);
+  }
+
+  &:hover {
+    opacity: 1;
+    color: $m-01;
+    &:before {
+      width: 100%; /* Expanding the width on hover */
+    }
+  }
+}

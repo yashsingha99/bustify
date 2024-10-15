@@ -1,0 +1,12 @@
+pages
+    admin 
+        crud op on center ✔️
+        can see or crud on attendance according to bus ✔️
+        crud on user ✔️
+    
+    coordinate
+        can upload and take attandance (not lock) ✔️
+        can see user info    X
+
+    
+    use redux for store centers..   X
