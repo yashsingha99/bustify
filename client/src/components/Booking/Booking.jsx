@@ -153,7 +153,11 @@ const Booking = () => {
       },
       preConfirm: () => {
         const selectedDate = document.getElementById('dateSelect').value; // Get the selected date
+        const pickupSelect = document.getElementById('pickupSelect').value; // Get the selected date
         if (!selectedDate) {
+          Swal.showValidationMessage('Please select credentials.');
+        }
+        if (!pickupSelect) {
           Swal.showValidationMessage('Please select credentials.');
         }
         return { selectedDate };
