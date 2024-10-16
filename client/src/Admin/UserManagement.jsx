@@ -63,7 +63,7 @@ const UserManagement = () => {
         user._id.toLowerCase().includes(searchLowerCase) ||
         user.name.toLowerCase().includes(searchLowerCase) ||
         user.email.toLowerCase().includes(searchLowerCase) ||
-        user.phoneNumber.toLowerCase().includes(searchLowerCase)
+        user.contact_no.toLowerCase().includes(searchLowerCase)
     );
     setFilteredUsers(filtered);
   };
@@ -77,7 +77,8 @@ const UserManagement = () => {
     setEditingUser(user);
     setValue("name", user.name);
     setValue("email", user.email);
-    setValue("phoneNumber", user.phoneNumber);
+    setValue("password", user.password);
+    setValue("contact_no", user.phoneNumber);
   };
 
   const onSubmit = async (data) => {
@@ -186,8 +187,18 @@ const UserManagement = () => {
           <label className="block text-gray-700 mb-2">Phone Number</label>
           <input
             type="text"
-            {...register("phoneNumber", {
+            {...register("contact_no", {
               required: "Phone Number is required",
+            })}
+            className="p-2 border border-gray-300 rounded w-full"
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-700 mb-2">Password</label>
+          <input
+            type="text"
+            {...register("password", {
+              required: "Password is required",
             })}
             className="p-2 border border-gray-300 rounded w-full"
           />
@@ -216,10 +227,10 @@ const UserManagement = () => {
             className="p-2 border border-gray-300 rounded w-full"
           >
             <option key={"afternon"} value={"afternon"}>
-              afternon
+              afternoon
             </option>
             <option key={"forenone"} value={"forenone"}>
-              forenone
+              forenoon
             </option>
           </select>
         </div>

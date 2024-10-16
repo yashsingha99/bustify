@@ -55,7 +55,6 @@ const CenterManagement = () => {
   const handleCreateCenter = async (data) => {
     try {
       const response = await createCenter(data);
-      console.log(response);
       
       if (centers) setCenters([...centers, response.data]);
       else setCenters(response.data);
@@ -283,12 +282,12 @@ const CenterManagement = () => {
                     >
                       Edit
                     </button>
-                    {/* <button
+                    <button
                       onClick={() => handleDeleteCenter(center._id)}
                       className="bg-red-500 text-white p-2 rounded"
                     >
                       Delete
-                    </button> */}
+                    </button>
                   </td>
                 </tr>
               ))}

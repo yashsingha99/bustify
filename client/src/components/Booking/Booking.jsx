@@ -9,7 +9,8 @@ import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { useForm } from "react-hook-form";
-
+import withReactContent from "sweetalert2-react-content";
+const MySwal = withReactContent(Swal);
 const Booking = () => {
   const [allCenters, setAllCenters] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -30,27 +31,27 @@ const Booking = () => {
   };
 
   const handleRazorpayPayment = async (center) => {
-    // const res = await loadScript(import.meta.env.VITE_RAZORPAY_SCRIPT);
+    const res = await loadScript(import.meta.env.VITE_RAZORPAY_SCRIPT);
 
-    // if (!res) {
-    //   Swal.fire(
-    //     "Error",
-    //     "Failed to load Razorpay SDK. Please check your connection.",
-    //     "error"
-    //   );
-    //   return;
-    // }
-    // const options = {
-    //   key: import.meta.env.VITE_RAZORPAY_KEY_ID,
-    //   amount: center.amount * 100,
-    //   currency: "INR",
-    //   name: "Bustify",
-    //   description: "Bus Booking Transaction",
-    //   handler: async function (response) {
+    if (!res) {
+      Swal.fire(
+        "Error",
+        "Failed to load Razorpay SDK. Please check your connection.",
+        "error"
+      );
+      return;
+    }
+    const options = {
+      key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+      amount: center.amount * 100,
+      currency: "INR",
+      name: "Bustify.in",
+      description: "Bus Booking Transaction",
+
+      handler: async function (response) {
         const bookingData = {
           center: center._id,
-          // paymentId: String(response.razorpay_payment_id),
-          paymentId: String("ncj34324cbjcebcc"),
+          paymentId: String(response.razorpay_payment_id),
           id: userDetail?.userId,
           date: Cookies.get("date"),
           pickup: Cookies.get("pickup"),
@@ -58,15 +59,19 @@ const Booking = () => {
 
         try {
           const res = await createBooking(bookingData);
-          console.log(res);
-
           if (res.status === 201) {
-            Swal.fire(
-              "Success",
-              // "Payment successful! Payment ID: " + response.razorpay_payment_id,
-              "Payment successful! Payment ID: " ,
-              "success"
-            );
+            window.location.href = import.meta.env.VITE_WHATSAPP
+
+            // MySwal.fire({
+            //   title: "Success",
+            //   text: `Payment successful! Payment ID: ${response.razorpay_payment_id}`,
+            //   icon: "success",
+            //   confirmButtonText: "Ok",
+            //   confirmButtonColor: "#d33",
+            // }).then((result) => {
+            //   // if (result.isConfirmed) {
+            //   // }
+            // });
           } else {
             Swal.fire(
               "Error",
@@ -83,20 +88,20 @@ const Booking = () => {
             "error"
           );
         }
-      // },
-      // prefill: {
-      //   name: userDetail?.name || "User Name",
-      //   email: userDetail?.email || "user@example.com",
-      //   contact: userDetail?.contact_no || "9999999999",
-      // },
-      // theme: {
-      //   color: "#F37254",
-      // },
+      },
+      prefill: {
+        name: userDetail?.name || "User Name",
+        email: userDetail?.email || "user@example.com",
+        contact: userDetail?.contact_no || "9999999999",
+      },
+      theme: {
+        color: "#F37254",
+      },
     };
 
-    // const paymentObject = new window.Razorpay(options);
-    // paymentObject.open();
-  // };
+    const paymentObject = new window.Razorpay(options);
+    paymentObject.open();
+  };
 
   useEffect(() => {
     const fetchCenters = async () => {
@@ -111,7 +116,6 @@ const Booking = () => {
     };
     fetchCenters();
   }, []);
-
   const handleBook = async (center) => {
     if (!isAuthenticated) {
       navigate("/login");
@@ -122,48 +126,58 @@ const Booking = () => {
       title: "Confirm Booking",
       html: `
        <div>
-      <p>Are you sure you want to book this trip?</p>
-      <p style="font-size: 0.875rem;">Center: ${center.center}</p>
-      <p style="font-size: 0.875rem;">Amount: ₹${center.amount}</p>
-      <select id="dateSelect" style="padding: 0.25rem; margin-bottom: 0.75rem; border: 1px solid #FF6600; border-radius: 0.375rem; width: 70%;">
-        <option value="">Select Exam Date</option>
-        <option value="26-10-2024">26-10-2024</option>
-        <option value="27-10-2024">27-10-2024</option>
-      </select>
-      <select id="pickupSelect" style="padding: 0.25rem; margin-bottom: 0.75rem; border: 1px solid #FF6600; border-radius: 0.375rem; width: 70%;">
-        <option value="">Select Pickup Point</option>
-        <option value="GLA MAIN GATE">GLA MAIN GATE</option>
-        <option value="Chhatikra">Chhatikra</option>
-        <option value="Goverdhan chauraha">Goverdhan chauraha</option>
-      </select>
-    </div>
+        <p>Are you sure you want to book this trip?</p>
+        <p style="font-size: 0.875rem;">Center: ${center.center}</p>
+        <p style="font-size: 0.875rem;">Amount: ₹${center.amount}</p>
+        <select id="dateSelect" style="padding: 0.25rem; margin-bottom: 0.75rem; border: 1px solid #FF6600; border-radius: 0.375rem; width: 70%;">
+          <option value="">Select Exam Date</option>
+          <option value="26-10-2024">26-10-2024</option>
+          <option value="27-10-2024">27-10-2024</option>
+        </select>
+        <select id="pickupSelect" style="padding: 0.25rem; margin-bottom: 0.75rem; border: 1px solid #FF6600; border-radius: 0.375rem; width: 70%;">
+          <option value="">Select Pickup Point</option>
+          <option value="GLA MAIN GATE">GLA MAIN GATE</option>
+          <option value="Chhatikra">Chhatikra</option>
+          <option value="Goverdhan chauraha">Goverdhan chauraha</option>
+        </select>
+        <br/>
+        <input type="checkbox" id="qrWarning" style="transform: scale(1.5); margin-right: 0.5rem; cursor: pointer;" />
+        <label for="qrWarning">Please don't pay by QRCode in the next step</label>
+      </div>
       `,
       showCancelButton: true,
       confirmButtonText: "Book Now",
       cancelButtonText: "Cancel",
       didOpen: () => {
-        const dateSelect = document.getElementById('dateSelect');
-        dateSelect.addEventListener('change', (e) => {
+        const dateSelect = document.getElementById("dateSelect");
+        dateSelect.addEventListener("change", (e) => {
           const selectedDate = e.target.value;
-          Cookies.set("date", selectedDate)
-          setDate(selectedDate); 
+          Cookies.set("date", selectedDate);
+          setDate(selectedDate);
         });
-        pickupSelect.addEventListener('change', (e) => {
+        const pickupSelect = document.getElementById("pickupSelect");
+        pickupSelect.addEventListener("change", (e) => {
           const pickup = e.target.value;
-          Cookies.set("pickup", pickup)
+          Cookies.set("pickup", pickup);
         });
       },
       preConfirm: () => {
-        const selectedDate = document.getElementById('dateSelect').value; // Get the selected date
-        const pickupSelect = document.getElementById('pickupSelect').value; // Get the selected date
+        const selectedDate = document.getElementById("dateSelect").value; // Get the selected date
+        const pickupSelect = document.getElementById("pickupSelect").value; // Get the selected date
+        const checkbox = document.getElementById("qrWarning"); // Get the checkbox state
+
         if (!selectedDate) {
-          Swal.showValidationMessage('Please select credentials.');
+          Swal.showValidationMessage("Please select a date.");
         }
         if (!pickupSelect) {
-          Swal.showValidationMessage('Please select credentials.');
+          Swal.showValidationMessage("Please select a pickup point.");
         }
+        if (!checkbox.checked) {
+          Swal.showValidationMessage("You must confirm, not to pay by QR code.");
+        }
+
         return { selectedDate };
-      }
+      },
     }).then(async (result) => {
       if (result.isConfirmed) {
         await handleRazorpayPayment(center);
@@ -201,16 +215,18 @@ const Booking = () => {
                         {center.center}
                       </h2>
                       <div className="text-5xl  flex text-gray-900 pb-4 mb-4 border-b border-gray-200 leading-none">
-                        <h1 className="text-2xl line-through text-gray-900 pb-4 ">₹{Number(center.amount) + (Number(center.amount) * 0.4)}</h1>
-                      <h1 className="text-4xl ml-2 text-orange-600 ">
-                        ₹{center.amount}
-                      </h1>
+                        <h1 className="text-2xl line-through text-gray-900 pb-4 ">
+                          ₹{Number(center.amount) + Number(center.amount) * 0.4}
+                        </h1>
+                        <h1 className="text-4xl ml-2 text-orange-600 ">
+                          ₹{center.amount}
+                        </h1>
                       </div>
-                     
-                      <p className="text-md text-gray-700 mt-3">
+
+                      {/* <p className="text-md text-gray-700 mt-3">
                         Arrival:{" "}
                         {new Date(center.reachedAtBus).toLocaleTimeString()}
-                      </p>
+                      </p> */}
                       <p className="text-md mb-3 text-gray-700 mt-1">
                         Schedule: {center.timing}
                       </p>

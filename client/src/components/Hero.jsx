@@ -22,6 +22,7 @@ import ScrollToTop from "./ScrollToTop";
 import bus1 from "../images/bus1.jpg";
 import bus2 from "../images/bus2.jpg";
 import home from "../images/home.jpeg";
+import razorpay from "../images/razorpay-logo.png"
 const Hero = () => {
   const images = [bus1, bus2];
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -66,7 +67,8 @@ const Hero = () => {
               transform: "scale(1.1)",
             }}
           />
-
+        
+        
           <Container
             className="p-16 px-12 w-full flex justify-center text-white"
             sx={{
@@ -82,6 +84,7 @@ const Hero = () => {
                 borderRadius: "16px",
                 py: { xs: 4, sm: 6, md: 8 },
                 px: { xs: 2, sm: 4, md: 6 },
+                // opacity: 50,
               }}
             >
               <motion.div
@@ -119,6 +122,7 @@ const Hero = () => {
               </motion.div>
             </Box>
           </Container>
+          
         </Box>
 
         <Container sx={{ py: 6 }}>
@@ -145,6 +149,7 @@ const Hero = () => {
               },
               {
                 icon: <FaRegHandshake />,
+                img: razorpay,
                 title: "Secured Payments",
                 description:
                   "Experience safe and reliable transactions with our secure payment options.",
@@ -179,11 +184,15 @@ const Hero = () => {
                     }}
                   >
                     <CardMedia>
+                      <div className={`w-full mt-4 flex items-center justify-between`}>
                       <Box
                         sx={{ fontSize: "4rem", color: "primary.main", mb: 2 }}
                       >
                         {service.icon}
                       </Box>
+                    { service?.img && <img className="h-8 mb-4 mr-4" src={service?.img} width="100px"  alt="" />}
+
+                      </div>
                     </CardMedia>
                     <CardContent>
                       <Typography

@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import CloseIcon from "@mui/icons-material/Close";
 import DehazeIcon from "@mui/icons-material/Dehaze";
-import {jwtDecode} from "jwt-decode"; // Correct import
+import { jwtDecode } from "jwt-decode"; // Correct import
 import {
   AppBar,
   Toolbar,
@@ -29,7 +29,7 @@ const Header = () => {
   const navigate = useNavigate();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  
+
   const token = Cookies.get("token");
   let decoded = null;
   try {
@@ -37,8 +37,9 @@ const Header = () => {
   } catch (error) {
     Cookies.remove("token"); // Correctly remove token
   }
+
   const isAuthenticated = Boolean(decoded);
-  
+
   const { isScroll, jumpToTop } = useContext(ScrollContext);
 
   const toggleDrawer = () => setDrawerOpen(!drawerOpen);
@@ -48,7 +49,7 @@ const Header = () => {
     if (isScroll) {
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
-    setDrawerOpen(false)
+    setDrawerOpen(false);
     navigate(route);
   };
 
@@ -66,7 +67,14 @@ const Header = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         Cookies.remove("token");
-        MySwal.fire("Success", "Logout successful.", "success");
+        Swal.fire({
+          title: "Success!",
+          text: "Logout successful.",
+          icon: "success",
+          timer: 1500,
+          buttons: false,
+          timerProgressBar: true,
+        });
         handleNavigation("/");
       }
     });
@@ -74,9 +82,17 @@ const Header = () => {
 
   const drawerContent = (
     <Box sx={{ width: "70vw", height: "100%", bgcolor: "background.paper" }}>
-      <div className="m-4 flex justify-end">
-        <CloseIcon onClick={toggleDrawer} />
+      <div className="flex justify-between">
+       {decoded &&  <div className="m-4 flex justify-start ">
+          {decoded?.email}
+          <br />
+          +91 {decoded?.contact_no}
+        </div>}
+        <div className="m-4 flex justify-end">
+          <CloseIcon onClick={toggleDrawer} />
+        </div>
       </div>
+
       <List>
         {!isAuthenticated && (
           <ListItem button onClick={() => handleNavigation("/login")}>
@@ -91,6 +107,13 @@ const Header = () => {
           <ChevronRightIcon />
           <div className="flex-col w-full">
             <ListItemText primary="Home" />
+            <div className="border-b w-120"></div>
+          </div>
+        </ListItem>
+        <ListItem button onClick={() => handleNavigation("/contact")}>
+          <ChevronRightIcon />
+          <div className="flex-col w-full">
+            <ListItemText primary="Contact Us" />
             <div className="border-b w-120"></div>
           </div>
         </ListItem>
@@ -114,15 +137,12 @@ const Header = () => {
             <div className="flex-col w-full">
               <ListItemText primary="Your Trips" />
               <div className="border-b w-120"></div>
-            </div> 
+            </div>
           </ListItem>
         )}
         {isAuthenticated && decoded?.role === "admin" && (
           <>
-            <ListItem
-              button
-              onClick={() => handleNavigation("/reservedSeats")}
-            >
+            <ListItem button onClick={() => handleNavigation("/reservedSeats")}>
               <ChevronRightIcon />
               <div className="flex-col w-full">
                 <ListItemText primary="Reserved Seates" />
@@ -192,6 +212,9 @@ const Header = () => {
           <Button color="inherit" onClick={() => handleNavigation("/booking")}>
             Book
           </Button>
+          <Button color="inherit" onClick={() => handleNavigation("/contact")}>
+            Contact
+          </Button>
           {isAuthenticated && (
             <>
               <Button
@@ -224,7 +247,6 @@ const Header = () => {
               )}
               {(decoded.role === "admin" || decoded.role === "coordinate") && (
                 <>
-                 
                   <Button
                     color="inherit"
                     onClick={() => handleNavigation("/attendance")}
@@ -233,12 +255,9 @@ const Header = () => {
                   </Button>
                 </>
               )}
-
             </>
           )}
-          <Button color="inherit" onClick={() => handleNavigation("/contact")}>
-            Contact
-          </Button>
+
           {isAuthenticated ? (
             <div className="relative">
               <AccountCircleIcon
@@ -248,18 +267,12 @@ const Header = () => {
               {isOpen && (
                 <Box className="absolute right-0 mt-2 w-48 text-black bg-white rounded-md shadow-lg z-20">
                   <List>
-                    <ListItem
-                      button
-                      onClick={() => handleNavigation("/profile")}
-                    >
-                      <ListItemText primary="Profile" />
-                    </ListItem>
-                    <ListItem
-                      button
-                      onClick={() => handleNavigation("/settings")}
-                    >
-                      <ListItemText primary="Settings" />
-                    </ListItem>
+                    <div className="m-4 flex justify-start ">
+                      {decoded?.email}
+                      <br />
+                      +91 {decoded?.contact_no}
+                    </div>
+                    
                     <ListItem button onClick={onLogout}>
                       <ListItemText primary="Logout" />
                     </ListItem>

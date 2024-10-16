@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { getUserBooking } from "../../API/bus.api";
 import Cookies from "js-cookie";
-import {jwtDecode} from "jwt-decode"; // Fix incorrect import
+import {jwtDecode} from "jwt-decode";
 
 function YourTrip() {
   const [trips, setTrips] = useState([]);

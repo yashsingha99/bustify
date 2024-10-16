@@ -82,12 +82,12 @@ const Footer = () => {
           href="/"
           className="flex title-font font-medium items-center md:justify-start justify-center text-white"
         >
-          <img src={logo} alt="Bustify Logo" className="h-8" />
+          <img src={logo} width="200px"  alt="Bustify Logo" className="h-12" />
         </a>
         <p className="text-sm text-gray-500 sm:ml-4 sm:pl-4 sm:border-l-2 sm:border-gray-200 sm:py-2 sm:mt-0 mt-4">
           © 2024 COPYRIGHT BUSTIFY -
           <a
-            href="https://twitter.com/bustify"
+            href="#"
             className="text-gray-600 ml-1"
             rel="noopener noreferrer"
             target="_blank"

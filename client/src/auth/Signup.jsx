@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import {
   TextField,
@@ -12,6 +12,8 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import swal from "sweetalert";
 import { create } from "../API/user.api";
+import Swal from "sweetalert2";
+import { ScrollContext } from "../context/ScrollContext";
 
 const schema = yup.object().shape({
   name: yup.string().required("Name is required"),
@@ -29,6 +31,7 @@ const schema = yup.object().shape({
 });
 
 const Signup = () => {
+  const { isScroll, jumpToTop } = useContext(ScrollContext);
   const {
     register,
     handleSubmit,
@@ -46,7 +49,7 @@ const Signup = () => {
     try {
       const res = await create(data);
       if (res.status == 200) {
-        swal({
+        Swal.fire({
           title: "Welcome!",
           text: "Your account has been created successfully!",
           icon: "success",
@@ -54,6 +57,7 @@ const Signup = () => {
           buttons: false,
           timerProgressBar: true,
         });
+        jumpToTop();
 
         navigate("/");
       } else {
@@ -67,6 +71,7 @@ const Signup = () => {
       );
     }
     reset();
+    jumpToTop();
     setProgress(false);
   };
 
@@ -150,7 +155,7 @@ const Signup = () => {
             </Button>
           </Box>
         </form>
-        <a href="#" className="text-blue-900 text-center w-full">
+        <a href="https://forms.gle/xpgNcUQzBca2oJ4M8" className="text-blue-900 text-center w-full">
           <div> Apply for co-ordinate </div>
         </a>
       </div>
