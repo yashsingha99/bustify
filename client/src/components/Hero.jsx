@@ -35,14 +35,14 @@ const Hero = () => {
     return () => clearInterval(interval);
   }, [images.length]);
 
-  const { isScroll, jumpToDown } = useContext(ScrollContext);
+  const { isScroll, jumpToDown, jumpToTop } = useContext(ScrollContext);
   return (
     <section className=" text-black  py-8">
       <Box>
         <Box
           sx={{
             position: "relative",
-            height: { xs: "50vh", sm: "60vh", md: "70vh" }, 
+            height: { xs: "50vh", sm: "60vh", md: "70vh" },
             width: "100vw",
             display: "flex",
             alignItems: "center",
@@ -59,8 +59,7 @@ const Hero = () => {
               right: 0,
               bottom: 0,
               zIndex: 1,
-              backgroundImage:
-                `url(${home})`,
+              backgroundImage: `url(${home})`,
               backgroundSize: "cover",
               backgroundPosition: "center",
               filter: "blur(2px)",
@@ -78,7 +77,7 @@ const Hero = () => {
             <Box
               sx={{
                 backgroundColor: "white",
-                color: "#FF5733", 
+                color: "#FF5733",
                 width: { xs: "90%", sm: "80%", md: "70%" },
                 borderRadius: "16px",
                 py: { xs: 4, sm: 6, md: 8 },
@@ -96,7 +95,7 @@ const Hero = () => {
                   gutterBottom
                   sx={{
                     fontWeight: "bold",
-                    fontSize: { xs: "1.75rem", sm: "2.25rem", md: "2.5rem" }, 
+                    fontSize: { xs: "1.75rem", sm: "2.25rem", md: "2.5rem" },
                   }}
                 >
                   Welcome to Trusted Journeys
@@ -107,7 +106,7 @@ const Hero = () => {
                   gutterBottom
                   sx={{
                     mb: 4,
-                    fontSize: { xs: "1rem", sm: "1.25rem", md: "1.5rem" }, 
+                    fontSize: { xs: "1rem", sm: "1.25rem", md: "1.5rem" },
                   }}
                 >
                   Your Reliable, Safe, and Convenient Travel Partner
@@ -136,8 +135,7 @@ const Hero = () => {
               {
                 icon: <FaBus />,
                 title: "Comfortable Buses",
-                description:
-                  "comfortable & smooth journey.",
+                description: "comfortable & smooth journey.",
               },
               {
                 icon: <FaMapMarkedAlt />,
@@ -147,10 +145,11 @@ const Hero = () => {
               },
               {
                 icon: <FaRegHandshake />,
-                title: "Trusted by Thousands",
+                title: "Secured Payments",
                 description:
-                  "Join thousands of happy travelers who trust our services.",
+                  "Experience safe and reliable transactions with our secure payment options.",
               },
+
               {
                 icon: <FaPhoneAlt />,
                 title: "24/7 Support",
@@ -325,6 +324,7 @@ const Hero = () => {
                 variant="contained"
                 color="secondary"
                 size="large"
+                onClick={() => jumpToTop()}
                 component={Link}
                 to="/routes"
               >

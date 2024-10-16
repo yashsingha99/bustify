@@ -23,6 +23,7 @@ const attendanceSchema = new mongoose.Schema(
         round: {
           type: String,
           enum: ["first", "second"],
+          default: "first"
         },
 
         candidate: [

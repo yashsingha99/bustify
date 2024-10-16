@@ -114,7 +114,7 @@ export default function Services() {
                     <p className="text-xl font-bold text-gray-900">Premium Express</p>
                   </div>
                   <button
-                    onClick={() => window.location.href = '/schedule'}
+                    onClick={() => window.location.href = '/routes'}
                     className="px-4 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-lg hover:bg-indigo-700 transition-colors"
                   >
                     View Schedule

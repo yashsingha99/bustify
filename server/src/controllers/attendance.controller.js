@@ -1,19 +1,10 @@
 const User = require("../model/user.model");
 const Attendance = require("../model/attendance.model");
-// const redisClient = require("../config/redis");
-
-const clearCache = (key) => {
-  // redisClient.del(key, (err) => {
-  //   if (err) {
-  //     console.error(`Error clearing cache for key ${key}:`, err);
-  //   }
-  // });
-};
 
 const getAttendanceByBusNo = async (req, res) => {
   try {
     const { busNo } = req.query;
-    const cacheKey = `attendance:bus:${busNo}`;
+    // const cacheKey = `attendance:bus:${busNo}`;
 
     // redisClient.get(cacheKey, async (err, cachedData) => {
     //   if (err) throw err;
@@ -53,48 +44,57 @@ const getAttendanceByBusNo = async (req, res) => {
 
 const createOrUpdateAttendance = async (req, res) => {
   try {
-    const { centerId, coordinate} = req.body;
+    const { centerId, coordinate, candidates } = req.body;
     
     if (!centerId || !coordinate) {
-      return res.status(400).json({ message: "Invalid attendance data" });
+      return res.status(400).json({ message: "Missing required attendance data" });
     }
 
-    const coordinateId = await User.findOne({ email: coordinate });
-  
-    let attendance = await Attendance.findOne({coordinate : coordinateId._id});
-    // console.log("attendance", attendance);
-    
+    const coordinateUser = await User.findOne({ email: coordinate });
+    if (!coordinateUser) {
+      return res.status(404).json({ message: "Coordinate user not found" });
+    }
+
+    let attendance = await Attendance.findOne({ coordinate: coordinateUser._id });
+
     if (attendance) {
-      let updatedAttendance = await Attendance.findByIdAndUpdate(attendance._id,
+      let updatedAttendance = await Attendance.findByIdAndUpdate(
+        attendance._id,
         {
-          $addToSet:{centers : centerId }
-        }
+          $addToSet: { centers: centerId }, // Add the center to the set
+          $push: { 
+            attendanceRecords: {
+              round: "first", // You can dynamically adjust the round here
+              candidate: candidates?.map(candidate => ({
+                user: candidate.userId, // candidate should include userId
+              }))
+            }
+          }
+        },
+        { new: true }
       );
-
-      // Clear cache for this bus number and coordinate
-      // const cacheKey = `attendance:bus:${busNo}`;
-      // clearCache(cacheKey);
-
-      res.status(200).json(updatedAttendance);
+      console.log(updatedAttendance);
+      
+      return res.status(200).json(updatedAttendance);
     } else {
-      const newAttendance =  Attendance.create({
-        centers: centerId, 
-        coordinate: coordinateId._id,
+      const newAttendance = await Attendance.create({
+        centers: [centerId],
+        coordinate: coordinateUser._id,
+        attendanceRecords: [{
+          round: "first",
+          candidate: candidates.map(candidate => ({
+            user: candidate.userId,
+          }))
+        }]
       });
-       console.log(newAttendance);
-       
-
-      // const savedAttendance = await newAttendance.save();
-
-      // const cacheKey = `attendance:bus:${busNo}`;
-      // clearCache(cacheKey);
-
-      res.status(201).json(newAttendance);
+      return res.status(201).json(newAttendance);
     }
   } catch (error) {
+    console.error("Error processing attendance", error);
     res.status(500).json({ error: "Error processing attendance" });
   }
 };
+
 
 const fillAttendance = async (req, res) => {
   const { id } = req.params;
@@ -102,13 +102,6 @@ const fillAttendance = async (req, res) => {
 
   try {
     const cacheKey = `attendance:${id}`;
-
-    // redisClient.get(cacheKey, async (err, cachedData) => {
-    //   if (err) throw err;
-
-    //   if (cachedData) {
-    //     clearCache(cacheKey); // Clear cache before updating
-    //   }
 
     const attendance = await Attendance.findByIdAndUpdate(
       id,
@@ -138,7 +131,6 @@ const getAttendance = async (req, res) => {
     
     if (user.role === "coordinate" || user.role === "admin") {
       query.coordinate = user.userId;
-      console.log("jkhkh");
     }
     
     const attendanceRecords = await Attendance.find(query)

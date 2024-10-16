@@ -9,12 +9,6 @@ const createBooking = async (req, res) => {
      
     if (!paymentId)
       return res.status(400).json({ message: "paymentId is required" });
-
-    // const cachedBooking = await redisClient.get(`booking:${paymentId}`);
-    // if (cachedBooking) {
-    //   return res.status(400).json({ message: "Booking already exists" });
-    // }
-
     const isUser = await User.findById(id);
     if (!isUser) return res.status(400).json({ message: "User not found" });
 
@@ -30,14 +24,8 @@ const createBooking = async (req, res) => {
     if(!findCenter){
         return res.status(400).json({ message: "Center not found" })
     }
-    findCenter.user.push(isUser._id)
+    findCenter.busBook.push(newBooking)
     await findCenter.save();
-
-    // await redisClient.set(`booking:${paymentId}`, JSON.stringify(newBooking), "EX", 3600);
-
-    // Invalidate the user's booking list in cache
-    // await redisClient.del(`user_bookings:${isUser.email}`);
-
     res.status(201).json(newBooking);
   } catch (error) {
     console.error(error);
@@ -49,18 +37,8 @@ const getBookingById = async (req, res) => {
   try {
     const bookingId = req.params.id;
 
-    // Check cache
-    // const cachedBooking = await redisClient.get(`booking:${bookingId}`);
-    // if (cachedBooking) {
-      // return res.status(200).json(JSON.parse(cachedBooking));
-    // }
-
-    // Fetch from DB and populate center and user
     const booking = await BusBook.findById(bookingId).populate("center").populate("user");
     if (!booking) return res.status(404).json({ message: "Booking not found" });
-
-    // Cache the result
-    // await redisClient.set(`booking:${bookingId}`, JSON.stringify(booking), "EX", 3600);
 
     res.status(200).json(booking);
   } catch (error) {
@@ -81,9 +59,6 @@ const updateBooking = async (req, res) => {
 
     if (!updatedBooking)
       return res.status(404).json({ message: "Booking not found" });
-
-    // Invalidate cache for this booking
-    // await redisClient.del(`booking:${bookingId}`);
 
     res.status(200).json(updatedBooking);
   } catch (error) {
@@ -118,16 +93,6 @@ const getUserBooking = async (req, res) => {
     // Check user
     const isUser = await User.findOne({ email });
     if (!isUser) return res.status(404).json({ message: "User not found" });
-
-    // const redisKey = `user_bookings:${isUser.email}`;
-
-    // Check cache
-    // const cachedBookings = await redisClient.get(redisKey);
-    // if (cachedBookings) {
-    //   return res.status(200).json(JSON.parse(cachedBookings));
-    // }
-
-    // Fetch from DB
     const bookings = await User.findById(isUser._id).populate({
       path: "bookSchema",
       populate: { path: "center", model: "Center" }
@@ -136,8 +101,6 @@ const getUserBooking = async (req, res) => {
     if (!bookings || bookings.bookSchema.length === 0)
       return res.status(404).json({ message: "No bookings found" });
 
-    // Cache the result
-    // await redisClient.set(redisKey, JSON.stringify(bookings), "EX", 3600);
 
     return res.status(200).json(bookings);
   } catch (error) {
@@ -150,14 +113,6 @@ const getAllBookings = async (req, res) => {
   try {
     const { page = 1, limit = 10 } = req.query;
 
-    // const redisKey = `all_bookings:${page}:${limit}`;
-    // const cachedBookings = await redisClient.get(redisKey);
-
-    // if (cachedBookings) {
-    //   return res.status(200).json(JSON.parse(cachedBookings));
-    // }
-
-    // Fetch paginated bookings from DB
     const bookings = await BusBook.find()
       .skip((page - 1) * limit)
       .limit(parseInt(limit))
@@ -165,14 +120,6 @@ const getAllBookings = async (req, res) => {
 
     const total = await BusBook.countDocuments();
     const totalPages = Math.ceil(total / limit);
-
-    // Cache the result
-    // await redisClient.set(redisKey, JSON.stringify({
-    //   total,
-    //   totalPages,
-    //   currentPage: parseInt(page),
-    //   bookings,
-    // }), "EX", 3600);
 
     res.status(200).json({
       total,

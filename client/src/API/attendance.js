@@ -38,7 +38,7 @@ export const getAttendance = async (user) => {
   try {
     console.log("user", user);
 
-    const res = await axios.get(`${URI}/getAttendance`,  user );
+    const res = await axios.get(`${URI}/getAttendance`,  {user} );
     return res;
   } catch (error) {
     console.error(error);

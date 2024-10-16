@@ -30,26 +30,27 @@ const Booking = () => {
   };
 
   const handleRazorpayPayment = async (center) => {
-    const res = await loadScript(import.meta.env.VITE_RAZORPAY_SCRIPT);
+    // const res = await loadScript(import.meta.env.VITE_RAZORPAY_SCRIPT);
 
-    if (!res) {
-      Swal.fire(
-        "Error",
-        "Failed to load Razorpay SDK. Please check your connection.",
-        "error"
-      );
-      return;
-    }
-    const options = {
-      key: import.meta.env.VITE_RAZORPAY_KEY_ID,
-      amount: center.amount * 100,
-      currency: "INR",
-      name: "Bustify",
-      description: "Bus Booking Transaction",
-      handler: async function (response) {
+    // if (!res) {
+    //   Swal.fire(
+    //     "Error",
+    //     "Failed to load Razorpay SDK. Please check your connection.",
+    //     "error"
+    //   );
+    //   return;
+    // }
+    // const options = {
+    //   key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+    //   amount: center.amount * 100,
+    //   currency: "INR",
+    //   name: "Bustify",
+    //   description: "Bus Booking Transaction",
+    //   handler: async function (response) {
         const bookingData = {
           center: center._id,
-          paymentId: String(response.razorpay_payment_id),
+          // paymentId: String(response.razorpay_payment_id),
+          paymentId: String("ncj34324cbjcebcc"),
           id: userDetail?.userId,
           date: Cookies.get("date"),
           pickup: Cookies.get("pickup"),
@@ -62,7 +63,8 @@ const Booking = () => {
           if (res.status === 201) {
             Swal.fire(
               "Success",
-              "Payment successful! Payment ID: " + response.razorpay_payment_id,
+              // "Payment successful! Payment ID: " + response.razorpay_payment_id,
+              "Payment successful! Payment ID: " ,
               "success"
             );
           } else {
@@ -81,20 +83,20 @@ const Booking = () => {
             "error"
           );
         }
-      },
-      prefill: {
-        name: userDetail?.name || "User Name",
-        email: userDetail?.email || "user@example.com",
-        contact: userDetail?.contact_no || "9999999999",
-      },
-      theme: {
-        color: "#F37254",
-      },
+      // },
+      // prefill: {
+      //   name: userDetail?.name || "User Name",
+      //   email: userDetail?.email || "user@example.com",
+      //   contact: userDetail?.contact_no || "9999999999",
+      // },
+      // theme: {
+      //   color: "#F37254",
+      // },
     };
 
-    const paymentObject = new window.Razorpay(options);
-    paymentObject.open();
-  };
+    // const paymentObject = new window.Razorpay(options);
+    // paymentObject.open();
+  // };
 
   useEffect(() => {
     const fetchCenters = async () => {

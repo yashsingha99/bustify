@@ -18,13 +18,13 @@ const schema = yup.object().shape({
   email: yup.string().email("Invalid email").required("Email is required"),
   contact_no: yup
     .string()
-    .length(10, "Contact number must be exactly 10 digits")
+    .length(10, "Enter valid Contact No. ")
     .matches(/^\d+$/, "Contact number must contain only numbers")
     .required("Contact number is required"),
   password: yup
     .string()
     .min(4, "Password must be at least 4 characters")
-    .max(10, "Password must be at least 10 characters")
+    .max(10, "Password must be at most 10 characters")
     .required("Password is required"),
 });
 
@@ -50,11 +50,11 @@ const Signup = () => {
           title: "Welcome!",
           text: "Your account has been created successfully!",
           icon: "success",
-          timer: 3000, 
-          buttons: false, 
+          timer: 3000,
+          buttons: false,
           timerProgressBar: true,
         });
-        
+
         navigate("/");
       } else {
         swal("Oops!", "Try again", "error");
@@ -86,27 +86,27 @@ const Signup = () => {
           <hr />
         </div>
 
-        <h2 className="mt-8 text-center text-2xl">Connect with bustify</h2>
-        <div className="flex flex-col w-full px-4 items-center justify-center mt-4">
-         
-        </div>
+        <h2 className="mt-8 text-center italic text-4xl">
+          Welcome to bustify.in!
+        </h2>
+        <div className="flex flex-col w-full px-4 items-center justify-center mt-4"></div>
       </div>
       <div
         className="lg:w-1/3 lg:mt-12 h-2/3  bg-white lg:rounded-e-xl p-8 shadow-2xl w-full"
         sx={{ w: 3 / 4 }}
       >
         <div className="flex flex-col justify-center items-center">
-        <Typography variant="h4" component="h1" gutterBottom>
-          Sign Up
-        </Typography>
-        <h4 className="black ml-4 flex text-center">
-          Already have an account?
-          <Link to="/Login">
-            <p className="text-blue-900 ml-2 mb-2">Login</p>{" "}
-          </Link>
-        </h4>
+          <Typography variant="h4" component="h1" gutterBottom>
+            Sign Up
+          </Typography>
+          <h4 className="black ml-4 flex text-center">
+            Already have an account?
+            <Link to="/Login">
+              <p className="text-blue-900  ml-2 mb-2">Login</p>{" "}
+            </Link>
+          </h4>
         </div>
-       
+
         <form onSubmit={handleSubmit(onSubmit)}>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
             <TextField

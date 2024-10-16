@@ -11,7 +11,7 @@ const TNC = () => {
   }
 
   return (
-    <div className="mt-16" style={styles.modalOverlay}>
+    <div className="mt-16" onClick={closeModal} style={styles.modalOverlay}>
       <div style={styles.modalContent}>
         <div style={styles.modalHeader}>
           <button onClick={closeModal} style={styles.closeButton}>

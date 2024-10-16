@@ -3,7 +3,7 @@ const Center = require("../model/center.model");
 
 // const clearCentersCache = async () => {
 //   const redisHashKey = "centers";
-//   await redisClient.del(redisHashKey); 
+//   await redisClient.del(redisHashKey);
 // };
 
 const createCenter = async (req, res) => {
@@ -54,7 +54,7 @@ const getCenterById = async (req, res) => {
     }
 
     // await redisClient.set(redisKey, JSON.stringify(center), {
-    //   EX: 3600, 
+    //   EX: 3600,
     // });
 
     return res.status(200).json(center);
@@ -84,7 +84,7 @@ const updateCenter = async (req, res) => {
     }
 
     // await clearCentersCache();
-    // await redisClient.del(`center_${id}`); 
+    // await redisClient.del(`center_${id}`);
 
     return res.status(200).json(updatedCenter);
   } catch (error) {
@@ -104,7 +104,7 @@ const deleteCenter = async (req, res) => {
     }
 
     // await clearCentersCache();
-    // await redisClient.del(`center_${id}`); 
+    // await redisClient.del(`center_${id}`);
 
     return res.status(200).json({ message: "Center deleted successfully." });
   } catch (error) {
@@ -122,22 +122,18 @@ const getAllCenters = async (req, res) => {
     if (status) filters.status = status;
     if (timing) filters.timing = timing;
 
-    // const redisHashKey = "centers";
-    // const redisField = `${status || "all"}_${timing || "all"}`;
+    const centers = await Center.find(filters)
+      .sort({ createdAt: -1 })
+      .populate({
+        path: "busBook",
+        populate: {
+          path: "user",
+        },
+      });
 
-    // const cachedCenters = await redisClient.hGet(redisHashKey, redisField);
-    // if (cachedCenters) {
-    //   return res.status(200).json(JSON.parse(cachedCenters));
-    // }
-
-    const centers = await Center.find(filters).sort({ createdAt: -1 })
-      .populate("user", "name email role contact_no ")
     if (centers.length === 0) {
       return res.status(400).json({ message: "No centers found" });
     }
-
-    // await redisClient.hSet(redisHashKey, redisField, JSON.stringify(centers));
-    // await redisClient.expire(redisHashKey, 3600); 
 
     return res.status(200).json(centers);
   } catch (error) {
@@ -181,7 +177,7 @@ const getCenter = async (req, res) => {
       return res.status(400).json({ message: "Data not found" });
 
     // await redisClient.set(redisKey, JSON.stringify(data), {
-    //   EX: 3600, 
+    //   EX: 3600,
     // });
 
     return res.status(200).json({ data, message: "Successfully found" });

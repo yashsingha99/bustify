@@ -283,6 +283,12 @@ const CenterManagement = () => {
                     >
                       Edit
                     </button>
+                    {/* <button
+                      onClick={() => handleDeleteCenter(center._id)}
+                      className="bg-red-500 text-white p-2 rounded"
+                    >
+                      Delete
+                    </button> */}
                   </td>
                 </tr>
               ))}

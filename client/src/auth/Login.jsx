@@ -10,12 +10,6 @@ import CircularProgress from "@mui/material/CircularProgress";
 
 const schema = yup.object().shape({
   email: yup.string().email("Invalid email").required("Email is required"),
-  password: yup
-    .string()
-    .min(4, "Password must be at least 4 characters")
-    .max(10, "Password must be at most 10 characters")
-    .matches(/[a-z]/, "Password must contain at least one lowercase letter")
-    .required("Password is required"),
 });
 const Login = () => {
   const {
@@ -73,7 +67,7 @@ const Login = () => {
       maxWidth="xs"
     >
       <div
-        className=" mt-12 bg-cyan-800 lg:rounded-s-xl h-2/3 py-16 p-4  lg:w-1/4 text-white"
+        className=" mt-12 bg-cyan-800 lg:rounded-s-xl h-2/3 py-16 p-4 w-full  lg:w-1/4 text-white"
         sx={{ m: "40" }}
       >
         <h1 className="text-4xl font-bold text-center">Hello...</h1>
@@ -82,7 +76,9 @@ const Login = () => {
           <hr />
         </div>
 
-        <h2 className="mt-8 text-center text-2xl">Connect with bustify</h2>
+        <h2 className="mt-8 text-center italic text-4xl">
+          Welcome to bustify.in!
+        </h2>
         <div className="flex flex-col w-full px-4 items-center justify-center mt-4"></div>
       </div>
       <div

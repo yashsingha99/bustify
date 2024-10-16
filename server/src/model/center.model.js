@@ -22,15 +22,16 @@ const centerSchema = new mongoose.Schema(
       enum: ["Forenoon", "Afternoon"],
       required: true,
     },
+
     status: {
       type: String,
       enum: ["active", "unactive", "under maintenance"],
       default: "active",
     },
-    user:[
+    busBook:[
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        ref: "BusBook",
       }
     ]
   },
