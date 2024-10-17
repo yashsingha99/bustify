@@ -64,11 +64,12 @@ const Signup = () => {
         swal("Oops!", "Try again", "error");
       }
     } catch (error) {
-      swal(
-        "Oops!",
-        "The email you entered is already in use. Please use a different email or log in.",
-        "error"
-      );
+      Swal.fire({
+        title: "Network Error",
+        text: "Check Your Internet Connection",
+        icon: "error",
+        showConfirmButton: true,
+      });
     }
     reset();
     jumpToTop();

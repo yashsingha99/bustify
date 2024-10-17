@@ -22,21 +22,24 @@ const ReservedSeats = () => {
     const fetchAllCenters = async () => {
       try {
         const response = await getAllCenters();
-
+         console.log(response);
+         
         if (response?.data?.length > 0) {
+
           let tempCenter1 = {};
           let tempCenter2 = {};
           let tempSeats1 = {};
           let tempSeats2 = {};
 
           response.data.forEach((center) => {
-            center.busBook.forEach((seats) => {
+            center.busBook?.forEach((seats) => {
               if (seats.date === "26-10-2024") {
                 if (!tempSeats1[center._id]) {
                   tempSeats1[center._id] = [];
                 }
                 tempSeats1[center._id].push(seats);
-
+                console.log(seats);
+                
                 if (!tempCenter1[center._id]) {
                   tempCenter1[center._id] = [];
                   tempCenter1[center._id].push(center);
@@ -72,6 +75,10 @@ const ReservedSeats = () => {
     fetchAllCenters();
   }, []); 
 
+// console.log(center1);
+// console.log(center2);
+// console.log(seats1);
+// console.log(seats2);
 
 
   const handleCoordinate = async () => {
@@ -103,11 +110,11 @@ const ReservedSeats = () => {
     return <div className="text-center mt-24 text-xl">Loading...</div>;
   }
 
-  if (error) {
-    return (
-      <div className="text-center mt-24 text-xl text-red-500">{error}</div>
-    );
-  }
+  // if (error) {
+  //   return (
+  //     <div className="text-center mt-24 text-xl text-red-500">{error}</div>
+  //   );
+  // }
 
   return (
     <div className="flex flex-col mt-24 md:flex-row p-4 w-full h-full mx-auto">

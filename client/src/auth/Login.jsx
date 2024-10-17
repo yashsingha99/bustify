@@ -55,8 +55,8 @@ const Login = () => {
       }
     } catch (error) {
       Swal.fire({
-        title: "Login Failed!",
-        text: "Invalid email or password. Please check your credentials and try again.",
+        title: "Network Error",
+        text: "Check Your Internet Connection",
         icon: "error",
         showConfirmButton: true,
       });
