@@ -103,6 +103,7 @@ const Booking = () => {
     paymentObject.open();
   };
 
+  
   useEffect(() => {
     const fetchCenters = async () => {
       try {
