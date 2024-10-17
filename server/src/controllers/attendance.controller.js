@@ -127,7 +127,7 @@ const getAttendance = async (req, res) => {
   try {
     let query = {};
     const user  = req.body;
-    console.log(req.body);
+    console.log(req);
     
     if (user.role === "coordinate" || user.role === "admin") {
       query.coordinate = user.userId;

@@ -31,14 +31,14 @@ const ReservedSeats = () => {
           let tempSeats1 = {};
           let tempSeats2 = {};
 
-          response.data.forEach((center) => {
-            center.busBook?.forEach((seats) => {
+          response.data.map((center) => {
+            center?.busBook?.map((seats) => {
+             
               if (seats.date === "26-10-2024") {
                 if (!tempSeats1[center._id]) {
                   tempSeats1[center._id] = [];
                 }
                 tempSeats1[center._id].push(seats);
-                console.log(seats);
                 
                 if (!tempCenter1[center._id]) {
                   tempCenter1[center._id] = [];
@@ -54,8 +54,11 @@ const ReservedSeats = () => {
                   tempCenter2[center._id].push(center);
                 }
               }
+
+              console.log("seats", seats);
+
             });
-            tempCenter1[center._id].push(center);
+            // tempCenter1[center._id].push(center);
           });
           setCenter1(tempCenter1);
           setCenter2(tempCenter2);
@@ -66,6 +69,8 @@ const ReservedSeats = () => {
         }
         setLoading(false);
       } catch (err) {
+        console.log(err);
+        
         setError("Failed to fetch data.");
         setLoading(false);
         Swal.fire("Error", "Could not load data.", "error");
@@ -148,7 +153,7 @@ const ReservedSeats = () => {
                   setOrder("first");
                 }}
               >
-                {center?.center} (Seats: {seats?.center?._id?.length})
+                {center?.center} (Seats: {seats1[center._id]?.length})
               </div>
             );
           })
@@ -176,7 +181,7 @@ const ReservedSeats = () => {
                   setOrder("second");
                 }}
               >
-                {center?.center} (Seats: {center?.busBook?.length})
+                {center?.center} (Seats: {seats2[center._id]?.length})
               </div>
             );
           })
