@@ -83,7 +83,7 @@ const Signup = () => {
       maxWidth="xs"
     >
       <div
-        className=" mt-12 bg-cyan-800 lg:rounded-s-xl h-2/3 py-16 p-4  lg:w-1/4 text-white"
+        className=" mt-12 w-full bg-cyan-800 lg:rounded-s-xl h-2/3 py-16 p-4  lg:w-1/4 text-white"
         sx={{ m: "40" }}
       >
         <h1 className="text-4xl font-bold text-center">Hello...</h1>
@@ -156,6 +156,7 @@ const Signup = () => {
             </Button>
           </Box>
         </form>
+        <br />
         <a href="https://forms.gle/xpgNcUQzBca2oJ4M8" className="text-blue-900 text-center w-full">
           <div> Apply for co-ordinate </div>
         </a>

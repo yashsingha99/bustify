@@ -18,11 +18,12 @@ const ReservedSeats = () => {
   const [seats1, setSeats1] = useState([]);
   const [seats2, setSeats2] = useState([]);
 
+
   useEffect(() => {
     const fetchAllCenters = async () => {
       try {
         const response = await getAllCenters();
-         console.log(response);
+        //  console.log(response);
          
         if (response?.data?.length > 0) {
 
@@ -55,7 +56,6 @@ const ReservedSeats = () => {
                 }
               }
 
-              console.log("seats", seats);
 
             });
             // tempCenter1[center._id].push(center);
@@ -64,6 +64,7 @@ const ReservedSeats = () => {
           setCenter2(tempCenter2);
           setSeats1(tempSeats1); // Update the state
           setSeats2(tempSeats2); // Update the state
+
         } else {
           setError("No center available.");
         }
@@ -82,7 +83,7 @@ const ReservedSeats = () => {
 
 // console.log(center1);
 // console.log(center2);
-// console.log(seats1);
+console.log(seats1);
 // console.log(seats2);
 
 
@@ -91,17 +92,17 @@ const ReservedSeats = () => {
       let candidates = [];
       if (order === "first") {
         const seats = seats1[centerId];
-        seats.forEach((seat) => {
-          candidates.push(seat?.user?._id)
-        })
+        // seats.forEach((seat) => {
+        //   candidates.push(seat?.user)
+        // })
       } else {
         const seats = seats2[centerId];
-        seats.forEach((seat) => {
-          candidates.push(seat?.user?._id)
-        })
+        // seats.forEach((seat) => {
+        //   candidates.push(seat?.user?._id)
+        // })
       }
       
-      const data = { coordinate: email, centerId, candidates };
+      const data = { coordinate: email, centerId, seats };
       const res = await createOrUpdateAttendance(data);
       alert("Success");
       setEmail("");

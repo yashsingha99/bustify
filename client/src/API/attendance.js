@@ -36,9 +36,10 @@ export const updateAttendance = async (id, data) => {
 
 export const getAttendance = async (user) => {
   try {
-    console.log("user", user);
 
-    const res = await axios.get(`${URI}/getAttendance`,  {user} );
+    const res = await axios.post(`${URI}/getAttendance`,  user );
+    // console.log(res);
+    
     return res;
   } catch (error) {
     console.error(error);

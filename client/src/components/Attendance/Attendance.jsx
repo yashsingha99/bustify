@@ -9,94 +9,81 @@ import { jwtDecode } from "jwt-decode";
 import Cookies from "js-cookie";
 
 function Attendance() {
-  const [users, setUsers] = useState([]);
-  const [firstRoundStudents, setFirstRoundStudents] = useState();
-  const [secondRoundStudents, setSecondRoundStudents] = useState();
-  const [searchQuery, setSearchQuery] = useState("");
+  const round = Cookies.get("round");
+  const [firstRoundStudents, setFirstRoundStudents] = useState([]);
+  const [secondRoundStudents, setSecondRoundStudents] = useState([]);
+  const [seats, setSeats] = useState([]);
   const [attendanceStats, setAttendanceStats] = useState({
     present: 0,
     absent: 0,
   });
-  const token = Cookies.get("token");
-  let user = jwtDecode(token);
-  const round = localStorage.getItem("round");
-  useEffect(() => {
-    const hasFetched = Cookies.get("hasFetched")
 
-    if (user && hasFetched != false) {
-      fetchAttendance();
-      Cookies.set("hasFetched", false)
-    }
+  const token = Cookies.get("token");
+  const user = jwtDecode(token);
+
+  useEffect(() => {
+    fetchAttendance();
   }, []);
 
   const fetchAttendance = async () => {
     try {
       const res = await getAttendance(user);
-      if (res) {
-        const updatedStudents = {};
-        const uniqueUsers = new Set(); 
-  
-        res.data[0].centers.forEach((center) => {
-          center.user.forEach((user) => {
-            updatedStudents[user._id] = false; 
-            uniqueUsers.add(user._id); 
-          });
-        });
-  
-        const usersArray = Array.from(uniqueUsers).map((userId) => {
-          const user = res.data[0].centers.flatMap(center => center.user).find(u => u._id === userId);
-          return user; 
-        });
-  
-        setUsers(usersArray);
-        setFirstRoundStudents(updatedStudents);
-        setSecondRoundStudents(updatedStudents);
-        localStorage.setItem("firstRoundStudents", JSON.stringify(updatedStudents))
-        localStorage.setItem("secondRoundStudents", JSON.stringify(updatedStudents))
-      } else {
-        swal("Error", "No attendance records found", "error");
+      const seatArray = res?.data?.data[0]?.seats.map((seat) => ({
+        busBook: seat._id,
+        status: false,
+      }));
+      setSeats(res?.data?.data[0]?.seats);
+
+      // Initialize attendance rounds
+      if (!round) {
+        Cookies.set("round", "first");
+      }
+
+      setFirstRoundStudents(seatArray);
+      setSecondRoundStudents(seatArray);
+
+      // Store attendance data in localStorage for first and second rounds
+      if (!localStorage.getItem("first")) {
+        localStorage.setItem("first", JSON.stringify(seatArray));
+      }
+      if (!localStorage.getItem("second")) {
+        localStorage.setItem("second", JSON.stringify(seatArray));
       }
     } catch (error) {
       swal("Error", "Failed to fetch attendance records", "error");
     }
   };
-  
+
   const handleStatusChange = (userId) => {
     if (round === "first") {
-      setFirstRoundStudents((prevStudents) => {
-        const updatedStudents = { ...prevStudents };
-        updatedStudents[userId]= !updatedStudents[userId]; 
-        localStorage.setItem(
-          "firstRoundStudents",
-          JSON.stringify(updatedStudents)
-        );
-        return updatedStudents;
-      });
+      const updatedStudents = firstRoundStudents.map((student) =>
+        student.busBook === userId
+          ? { ...student, status: !student.status }
+          : student
+      );
+      setFirstRoundStudents(updatedStudents);
+      localStorage.setItem("first", JSON.stringify(updatedStudents));
     } else {
-      setSecondRoundStudents((prevStudents) => {
-        const updatedStudents = { ...prevStudents };
-        updatedStudents[userId] = !updatedStudents[userId]
-        localStorage.setItem(
-          "secondRoundStudents",
-          JSON.stringify(updatedStudents)
-        );
-        return updatedStudents;
-      });
+      const updatedStudents = secondRoundStudents.map((student) =>
+        student.busBook === userId
+          ? { ...student, status: !student.status }
+          : student
+      );
+      setSecondRoundStudents(updatedStudents);
+      localStorage.setItem("second", JSON.stringify(updatedStudents));
     }
   };
 
   useEffect(() => {
     const storedStudents =
       round === "first"
-        ? JSON.parse(localStorage.getItem("firstRoundStudents"))
-        : JSON.parse(localStorage.getItem("secondRoundStudents"));
+        ? JSON.parse(localStorage.getItem("first"))
+        : JSON.parse(localStorage.getItem("second"));
 
     if (storedStudents) {
-      if (round === "first") {
-        setFirstRoundStudents(storedStudents);
-      } else {
-        setSecondRoundStudents(storedStudents);
-      }
+      round === "first"
+        ? setFirstRoundStudents(storedStudents)
+        : setSecondRoundStudents(storedStudents);
     }
   }, [round]);
 
@@ -105,7 +92,7 @@ function Attendance() {
       <div className="w-full max-w-7xl bg-white shadow-md rounded-lg p-4 md:p-6">
         <div className="flex justify-evenly mb-6">
           <button
-            onClick={() => localStorage.setItem("round", "first")}
+            onClick={() => Cookies.set("round", "first")}
             className={`text-white px-8 py-2 rounded-lg ${
               round === "first" ? "bg-blue-500" : "bg-gray-500"
             }`}
@@ -113,14 +100,15 @@ function Attendance() {
             First Round
           </button>
           <button
-            onClick={() => localStorage.setItem("round", "second")}
-            className={`text-white px-8 py-2 rounded-lg bg-blue-500 `}
+            onClick={() => Cookies.set("round", "second")}
+            className={`text-white px-8 py-2 rounded-lg ${
+              round === "second" ? "bg-blue-500" : "bg-gray-500"
+            }`}
           >
             Second Round
           </button>
         </div>
 
-        {/* Attendance Stats */}
         <div className="mb-6 text-center">
           <span className="text-green-500 font-bold">
             Present: {attendanceStats.present}
@@ -137,26 +125,46 @@ function Attendance() {
             <table className="min-w-full bg-white border border-gray-200 mb-6 text-sm md:text-base">
               <thead>
                 <tr>
-                  <th className="py-2 px-4 border-b">Student Name</th>
+                  <th className="py-2 px-4 border-b">S.no</th>
+                  <th className="py-2 px-4 border-b">Name</th>
+                  <th className="py-2 px-4 border-b">Contact_no</th>
+                  <th className="py-2 px-4 border-b">Pick up</th>
+                  <th className="py-2 px-4 border-b">Center</th>
                   <th className="py-2 px-4 border-b">Attendance Status</th>
                 </tr>
               </thead>
               <tbody>
-                {users.length > 0 ? (
-                  users.map((user) => (
-                    <tr key={user._id} className="hover:bg-gray-100">
+                {seats.length > 0 ? (
+                  seats.map((seat, i) => (
+                    <tr key={seat._id} className="hover:bg-gray-100">
                       <td className="py-2 px-4 text-center border-b">
-                        {user.name}
+                        {i + 1}
+                      </td>
+                      <td className="py-2 px-4 text-center border-b">
+                        {seat?.busBook?.user?.name}
+                      </td>
+                      <td className="py-2 px-4 text-center border-b">
+                        {seat?.busBook?.user?.contact_no}
+                      </td>
+                      <td className="py-2 px-4 text-center border-b">
+                        {seat?.busBook?.pickup}
+                      </td>
+                      <td className="py-2 px-4 text-center border-b">
+                        {seat?.busBook?.center?.center}
                       </td>
                       <td className="py-2 px-4 border-b">
                         <div className="flex items-center justify-end space-x-2">
                           <Switch
                             checked={
                               round === "first"
-                                ? firstRoundStudents[user._id]|| false
-                                : secondRoundStudents[user._id]|| false
+                                ? firstRoundStudents.find(
+                                    (student) => student.busBook === seat._id
+                                  )?.status
+                                : secondRoundStudents.find(
+                                    (student) => student.busBook === seat._id
+                                  )?.status
                             }
-                            onChange={() => handleStatusChange(user._id)}
+                            onChange={() => handleStatusChange(seat._id)}
                             color="success"
                             icon={<CancelIcon />}
                             checkedIcon={<CheckCircleIcon />}
@@ -167,7 +175,7 @@ function Attendance() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={2} className="py-4 text-center">
+                    <td colSpan={6} className="py-4 text-center">
                       No students found.
                     </td>
                   </tr>

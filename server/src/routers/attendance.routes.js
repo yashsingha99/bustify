@@ -18,7 +18,7 @@ router.put(
   attendanceController.fillAttendance
 );
 
-router.get(
+router.post(
   '/getAttendance',
   // verifyToken,
   // authorizeRoles('admin', 'coordinate'), 

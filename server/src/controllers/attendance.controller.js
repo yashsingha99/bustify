@@ -44,7 +44,7 @@ const getAttendanceByBusNo = async (req, res) => {
 
 const createOrUpdateAttendance = async (req, res) => {
   try {
-    const { centerId, coordinate, candidates } = req.body;
+    const { centerId, coordinate, seats } = req.body;
     
     if (!centerId || !coordinate) {
       return res.status(400).json({ message: "Missing required attendance data" });
@@ -65,8 +65,8 @@ const createOrUpdateAttendance = async (req, res) => {
           $push: { 
             attendanceRecords: {
               round: "first", // You can dynamically adjust the round here
-              candidate: candidates?.map(candidate => ({
-                user: candidate.userId, // candidate should include userId
+              seats: seats?.map(seat => ({
+                busBook: seat._id, // candidate should include userId
               }))
             }
           }
@@ -82,8 +82,8 @@ const createOrUpdateAttendance = async (req, res) => {
         coordinate: coordinateUser._id,
         attendanceRecords: [{
           round: "first",
-          candidate: candidates.map(candidate => ({
-            user: candidate.userId,
+          seats: seats?.map(seat => ({
+            busBook: seat._id
           }))
         }]
       });
@@ -125,31 +125,43 @@ const fillAttendance = async (req, res) => {
 
 const getAttendance = async (req, res) => {
   try {
-    let query = {};
-    const user  = req.body;
-    console.log(req);
+    const user = req.body;  // Ensure it's a POST request to handle req.body
     
+    // Build query based on the user's role
+    let query = {};
     if (user.role === "coordinate" || user.role === "admin") {
       query.coordinate = user.userId;
     }
-    
+
+    // Fetch attendance records and populate fields
     const attendanceRecords = await Attendance.find(query)
-    .populate("coordinate", "name email role")  
     .populate({
-      path: "centers",  
-      populate: {
-        path: "user",  
-        select: "name email _id contact_no",  
-      },
-    })
+      path: "attendanceRecords.seats.busBook",  
+      model: "BusBook",  
+      populate: [
+        {
+          path: "user",  
+          select: "name email contact_no _id"  
+        },
+        {
+          path: "center",  
+          select: "center timing"  
+        }
+      ]
+    });
+  
 
-    
-    res.status(200).json(attendanceRecords);
 
+    // console.log("Populated attendanceRecords:", attendanceRecords[0].attendanceRecords);
+
+    res.status(200).json({ data: attendanceRecords[0].attendanceRecords, status: 200 });
   } catch (error) {
+    console.error("Error fetching attendance", error);
     res.status(500).json({ error: "Error fetching attendance" });
   }
 };
+
+
 
 
 const deleteAttendance = async (req, res) => {

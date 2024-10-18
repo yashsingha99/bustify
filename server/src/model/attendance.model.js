@@ -26,11 +26,11 @@ const attendanceSchema = new mongoose.Schema(
           default: "first"
         },
 
-        candidate: [
+        seats: [
           {
-            user: {
+            busBook: {
               type: mongoose.Schema.Types.ObjectId,
-              ref: "User",
+              ref: "BusBook",
             },
             status: {
               type: Boolean,
@@ -39,6 +39,7 @@ const attendanceSchema = new mongoose.Schema(
           },
         ],
       },
+      
     ],
 
     date: {

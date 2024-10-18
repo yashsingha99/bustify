@@ -122,6 +122,10 @@ const Login = () => {
           </Box>
         </form>
         <br />
+        <a href="https://forms.gle/xpgNcUQzBca2oJ4M8" className="text-blue-900 text-center w-full">
+          <div> Apply for co-ordinate </div>
+        </a>
+        <br />
       </div>
     </div>
   );
