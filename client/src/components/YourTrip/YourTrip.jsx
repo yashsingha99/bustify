@@ -52,7 +52,7 @@ function YourTrip() {
               key={trip?._id}
               className="bg-white shadow-md rounded-lg p-4 sm:p-6 md:flex md:items-center md:justify-between transition-all hover:shadow-lg"
             >
-              { !trip?.isRefund && 
+              {!trip?.isRefund && (
                 <div className="md:w-2/3">
                   <h2 className="text-lg sm:text-xl font-semibold text-gray-800">
                     Center: {trip?.center ? trip?.center?.center : "N/A"}
@@ -68,9 +68,8 @@ function YourTrip() {
                     Date: {trip?.center ? trip?.date : "N/A"}
                   </p>
                   <p className="text-gray-600 mt-1 sm:mt-2">Timing: Forenoon</p>
-                  
                 </div>
-              }
+              )}
 
               <div className="mt-4 md:mt-0 md:w-1/3 text-center sm:text-left">
                 <p className="text-gray-800 font-semibold">
@@ -84,27 +83,29 @@ function YourTrip() {
                 </p>
               </div>
               <p
-                    className={`mt-1 sm:mt-2 font-semibold ${
-                      trip?.isRefund === false
-                        ? "text-green-600"
-                        : "text-red-600"
-                    }`}
-                  >
-                    Status: {trip?.isRefund ? "Refunded" : "Sucess"}
-                  
-              <p
-                    className="mt-1 sm:mt-2 font-semibold 
+                className={`mt-1 sm:mt-2 font-semibold ${
+                  trip?.isRefund === false ? "text-green-600" : "text-red-600"
+                }`}
+              >
+                Status: {trip?.isRefund ? "Refunded" : "Sucess"}
+                {trip?.isRefund && (
+                  <div>
+                    <p
+                      className="mt-1 sm:mt-2 font-semibold 
                         text-red-600"
-                  >
-                    Due to a technical issue, your transaction will be refunded within 3-4 working days.
-                  </p>
-              <p
-                    className="mt-1 sm:mt-2 font-semibold 
+                    >
+                      Due to a technical issue, your transaction will be
+                      refunded within 3-4 working days.
+                    </p>
+                    <p
+                      className="mt-1 sm:mt-2 font-semibold 
                         text-red-600"
-                  >
-                    We appreciate your understanding and patience.
-                  </p>
-                  </p>
+                    >
+                      We appreciate your understanding and patience.
+                    </p>
+                  </div>
+                )}
+              </p>
             </div>
           ))
         ) : (

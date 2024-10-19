@@ -2,16 +2,24 @@ import React, { useEffect, useState } from "react";
 import { getAllCenters } from "../../API/center.api";
 import CircularProgress from "@mui/material/CircularProgress";
 import Swal from "sweetalert2";
+import swal from "sweetalert";
 import "sweetalert2/dist/sweetalert2.min.css";
 import "../../index.css";
 import { createBooking } from "../../API/bus.api";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
-import { useForm } from "react-hook-form";
 import withReactContent from "sweetalert2-react-content";
+import { useRazorpay } from "react-razorpay";
+
+const RAZORPAY_KEY_ID = import.meta.env.VITE_RAZORPAY_KEY_ID;
+const URI = import.meta.env.VITE_URI;
+
 const MySwal = withReactContent(Swal);
+
 const Booking = () => {
+  const { Razorpay } = useRazorpay();
+
   const [allCenters, setAllCenters] = useState([]);
   const [loading, setLoading] = useState(true);
   const [date, setDate] = useState("");
@@ -20,90 +28,100 @@ const Booking = () => {
   const isAuthenticated = !!token;
   const userDetail = isAuthenticated ? jwtDecode(token) : null;
   const navigate = useNavigate();
-  const loadScript = (src) => {
-    return new Promise((resolve) => {
-      const script = document.createElement("script");
-      script.src = src;
-      script.onload = () => resolve(true);
-      script.onerror = () => resolve(false);
-      document.body.appendChild(script);
-    });
-  };
 
-  const handleRazorpayPayment = async (center) => {
-    const res = await loadScript(import.meta.env.VITE_RAZORPAY_SCRIPT);
+  const handlePayment = async (amount) => {
+    try {
+      const response = await fetch(`${URI}/api/order/create-order`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ amount }),
+      });
 
-    if (!res) {
-      Swal.fire(
-        "Error",
-        "Failed to load Razorpay SDK. Please check your connection.",
-        "error"
-      );
-      return;
-    }
-    const options = {
-      key: import.meta.env.VITE_RAZORPAY_KEY_ID,
-      amount: center.amount * 100,
-      currency: "INR",
-      name: "Bustify.in",
-      description: "Bus Booking Transaction",
+      const order = await response.json();
+      const options = {
+        key: RAZORPAY_KEY_ID,
+        amount: order.amount,
+        currency: order.currency,
+        name: "bustify.in",
+        description: "Payment for your Seat",
+        order_id: order.id,
+        handler: async (response) => {
+          try {
+            const { razorpay_payment_id } = response;
+            await fetch(`${URI}/api/order/verify_payment`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
 
-      handler: async function (response) {
-        const bookingData = {
-          center: center._id,
-          paymentId: String(response.razorpay_payment_id),
-          id: userDetail?.userId,
-          date: Cookies.get("date"),
-          pickup: Cookies.get("pickup"),
-        };
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+              }),
+            });
 
-        try {
-          const res = await createBooking(bookingData);
-          if (res.status === 201) {
-            window.location.href = import.meta.env.VITE_WHATSAPP
-
-            // MySwal.fire({
-            //   title: "Success",
-            //   text: `Payment successful! Payment ID: ${response.razorpay_payment_id}`,
-            //   icon: "success",
-            //   confirmButtonText: "Ok",
-            //   confirmButtonColor: "#d33",
-            // }).then((result) => {
-            //   // if (result.isConfirmed) {
-            //   // }
-            // });
-          } else {
-            Swal.fire(
-              "Error",
-              "Failed to book the trip. Please try again.",
-              "error"
+            const res = await fetch(
+              `https://api.razorpay.com/v1/payments/${razorpay_payment_id}/capture`,
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  amount: amount,
+                  currency: "INR",
+                }),
+              }
             );
-          }
-          Cookies.remove("date");
-          Cookies.remove("pickup");
-        } catch (error) {
-          Swal.fire(
-            "Error",
-            "An unexpected error occurred. Please try again later.",
-            "error"
-          );
-        }
-      },
-      prefill: {
-        name: userDetail?.name || "User Name",
-        email: userDetail?.email || "user@example.com",
-        contact: userDetail?.contact_no || "9999999999",
-      },
-      theme: {
-        color: "#F37254",
-      },
-    };
 
-    const paymentObject = new window.Razorpay(options);
-    paymentObject.open();
+            const result = await res.json();
+
+            const bookingData = {
+              center: center._id,
+              paymentId: String(response.razorpay_payment_id),
+              id: userDetail?.userId,
+              date: Cookies.get("date"),
+              pickup: Cookies.get("pickup"),
+            };
+
+            const createBook = await createBooking(bookingData);
+            if (createBook.status === 201) {
+              window.location.href = import.meta.env.VITE_WHATSAPP;
+            } else {
+              Swal.fire(
+                "Error",
+                "Failed to book the trip. Please try again.",
+                "error"
+              );
+            }
+            Cookies.remove("date");
+            Cookies.remove("pickup");
+          } catch (err) {
+            swal("Payment failed", "Please Try Again", "error");
+          }
+        },
+        prefill: {
+          name: userDetail?.name || "User Name",
+          email: userDetail?.email || "user@example.com",
+          contact: userDetail?.contact_no || "9999999999",
+        },
+        notes: {
+          address: "Bustify bus services",
+        },
+        theme: {
+          color: "#3399cc",
+        },
+      };
+      const rzpay = new Razorpay(options);
+      rzpay.open(options);
+    } catch (err) {
+      swal("Network Error", "Check Your Internet Connection", "error");
+    }
   };
 
-  
   useEffect(() => {
     const fetchCenters = async () => {
       try {
@@ -117,6 +135,7 @@ const Booking = () => {
     };
     fetchCenters();
   }, []);
+
   const handleBook = async (center) => {
     if (!isAuthenticated) {
       navigate("/login");
@@ -174,14 +193,16 @@ const Booking = () => {
           Swal.showValidationMessage("Please select a pickup point.");
         }
         if (!checkbox.checked) {
-          Swal.showValidationMessage("You must confirm, not to pay by QR code.");
+          Swal.showValidationMessage(
+            "You must confirm, not to pay by QR code."
+          );
         }
 
         return { selectedDate };
       },
     }).then(async (result) => {
       if (result.isConfirmed) {
-        await handleRazorpayPayment(center);
+        await handlePayment(center.amount);
       }
     });
   };
