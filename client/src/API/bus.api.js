@@ -23,6 +23,24 @@ export const getBookingById = async (id) => {
     return { ...error, status: 400 };
   }
 };
+export const changeRefund = async (paymentId) => {
+  try {
+    const res = await axios.post(`${URI}/api/busBook/changeRefund`, paymentId);
+    return res;
+  } catch (error) {
+    console.log(error);
+    return { ...error, status: 400 };
+  }
+};
+export const createBusBookByAdmin = async (data) => {
+  try {
+    const res = await axios.post(`${URI}/api/busBook/createBusBookByAdmin`, data);
+    return res;
+  } catch (error) {
+    console.log(error);
+    return { ...error, status: 400 };
+  }
+};
 
 export const updateBooking = async (id, data) => {
   try {
@@ -67,9 +85,7 @@ export const getUserBooking = async (data) => {
 };
 export const getAllBusBookData = async (data) => {
   try {
-    const res = await axios.get(`${URI}/api/busBook/getAllBusBookData`, {
-      params: data, 
-    });
+    const res = await axios.get(`${URI}/api/busBook/getAllBusBookData`);
     return res;
   } catch (error) {
     console.log(error);

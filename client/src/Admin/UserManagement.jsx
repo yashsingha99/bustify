@@ -9,6 +9,7 @@ import {
   deleteUserById,
 } from "../API/user.api";
 import { getAllCenters } from "../API/center.api";
+import { createBusBookByAdmin } from "../API/bus.api";
 
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
@@ -91,7 +92,7 @@ const UserManagement = () => {
           icon: "success",
         });
       } else {
-        await create(data);
+        await createBusBookByAdmin(data);
         Swal.fire({
           title: "Success",
           text: "User created successfully.",
@@ -181,6 +182,7 @@ const UserManagement = () => {
             type="email"
             {...register("email", { required: "Email is required" })}
             className="p-2 border border-gray-300 rounded w-full"
+            required
           />
         </div>
         <div className="mb-4">
@@ -190,24 +192,40 @@ const UserManagement = () => {
             {...register("contact_no", {
               required: "Phone Number is required",
             })}
+            required
             className="p-2 border border-gray-300 rounded w-full"
           />
         </div>
         <div className="mb-4">
-          <label className="block text-gray-700 mb-2">Password</label>
+          <label className="block text-gray-700 mb-2">Pick Up</label>
+          <select
+            {...register("pickup")}
+            className="p-2 border border-gray-300 rounded w-full"
+            required
+          >
+            <option value="GLA MAIN GATE">GLA MAIN GATE</option>
+            <option value="Chhatikra">Chhatikra</option>
+            <option value="Goverdhan chauraha">Goverdhan chauraha</option>
+            <option value="Krishana Valley">Krishana Valley</option>
+            <option value="TownShip">TownShip</option>
+          </select>
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-700 mb-2">paymentId</label>
           <input
             type="text"
-            {...register("password", {
-              required: "Password is required",
-            })}
+            {...register("paymentId", { required: "paymentId is required" })}
             className="p-2 border border-gray-300 rounded w-full"
+            required
           />
         </div>
+
         <div className="mb-4">
           <label className="block text-gray-700 mb-2">Select Center</label>
           <select
-            {...register("centerId")}
+            {...register("center")}
             className="p-2 border border-gray-300 rounded w-full"
+            required
           >
             {allCenters && allCenters.length > 0 ? (
               allCenters.map((center) => (
@@ -221,16 +239,17 @@ const UserManagement = () => {
           </select>
         </div>
         <div className="mb-4">
-          <label className="block text-gray-700 mb-2">Timing</label>
+          <label className="block text-gray-700 mb-2">date</label>
           <select
-            {...register("timing")}
+            {...register("date")}
             className="p-2 border border-gray-300 rounded w-full"
+            required
           >
-            <option key={"afternon"} value={"afternon"}>
-              afternoon
+            <option key={"26-10-2024"} value={"26-10-2024"}>
+              26-10-2024
             </option>
-            <option key={"forenone"} value={"forenone"}>
-              forenoon
+            <option key={"27-10-2024"} value={"27-10-2024"}>
+              27-10-2024
             </option>
           </select>
         </div>

@@ -15,7 +15,8 @@ function YourTrip() {
       try {
         const data = { email: user_detail.email };
         const res = await getUserBooking(data);
-        
+        console.log(res);
+
         if (res.status === 200) {
           setTrips(res.data.bookSchema);
         } else {
@@ -27,13 +28,13 @@ function YourTrip() {
         setLoading(false);
       }
     };
-    
+
     if (user_detail?.email) {
       fetchTrips();
     } else {
       setLoading(false);
     }
-  }, [user_detail]);
+  }, []);
 
   return (
     <div className="min-h-screen p-4 mt-16 sm:mt-20">
@@ -51,31 +52,25 @@ function YourTrip() {
               key={trip?._id}
               className="bg-white shadow-md rounded-lg p-4 sm:p-6 md:flex md:items-center md:justify-between transition-all hover:shadow-lg"
             >
-              <div className="md:w-2/3">
-                <h2 className="text-lg sm:text-xl font-semibold text-gray-800">
-                  Center: {trip?.center ? trip?.center?.center : "N/A"}
-                </h2>
-                <p className="text-gray-600 mt-1 sm:mt-2">
-                  Route:{" "}
-                  {trip?.center ? trip?.center?.route.join(" → ") : "N/A"}
-                </p>
-                <p className="text-gray-600 mt-1 sm:mt-2">
-                  Pickup Point: {trip?.center ? trip?.pickup : "N/A"}
-                </p>
-                <p className="text-gray-600 mt-1 sm:mt-2">
-                  Date: {trip?.center ? trip?.date : "N/A"}
-                </p>
-                <p className="text-gray-600 mt-1 sm:mt-2">Timing: Forenoon</p>
-                <p
-                  className={`mt-1 sm:mt-2 font-semibold ${
-                    trip?.center?.status === "active"
-                      ? "text-green-600"
-                      : "text-red-600"
-                  }`}
-                >
-                  Status: {trip?.center ? trip?.center?.status : "N/A"}
-                </p>
-              </div>
+              { !trip?.isRefund && 
+                <div className="md:w-2/3">
+                  <h2 className="text-lg sm:text-xl font-semibold text-gray-800">
+                    Center: {trip?.center ? trip?.center?.center : "N/A"}
+                  </h2>
+                  <p className="text-gray-600 mt-1 sm:mt-2">
+                    Route:{" "}
+                    {trip?.center ? trip?.center?.route.join(" → ") : "N/A"}
+                  </p>
+                  <p className="text-gray-600 mt-1 sm:mt-2">
+                    Pickup Point: {trip?.center ? trip?.pickup : "N/A"}
+                  </p>
+                  <p className="text-gray-600 mt-1 sm:mt-2">
+                    Date: {trip?.center ? trip?.date : "N/A"}
+                  </p>
+                  <p className="text-gray-600 mt-1 sm:mt-2">Timing: Forenoon</p>
+                  
+                </div>
+              }
 
               <div className="mt-4 md:mt-0 md:w-1/3 text-center sm:text-left">
                 <p className="text-gray-800 font-semibold">
@@ -88,6 +83,28 @@ function YourTrip() {
                   Booked on: {new Date(trip?.createdAt).toLocaleString()}
                 </p>
               </div>
+              <p
+                    className={`mt-1 sm:mt-2 font-semibold ${
+                      trip?.isRefund === false
+                        ? "text-green-600"
+                        : "text-red-600"
+                    }`}
+                  >
+                    Status: {trip?.isRefund ? "Refunded" : "Sucess"}
+                  
+              <p
+                    className="mt-1 sm:mt-2 font-semibold 
+                        text-red-600"
+                  >
+                    Due to a technical issue, your transaction will be refunded within 3-4 working days.
+                  </p>
+              <p
+                    className="mt-1 sm:mt-2 font-semibold 
+                        text-red-600"
+                  >
+                    We appreciate your understanding and patience.
+                  </p>
+                  </p>
             </div>
           ))
         ) : (

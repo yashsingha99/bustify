@@ -15,7 +15,9 @@ exports.createUser = async (req, res) => {
 
     const { name, email, password, role, contact_no, address } = req.body;
 
-    const existingUser = await User.findOne({ email });
+    const existingUser = await User.findOne({ 
+      $or:[{contact_no},{email}]
+     });
     if (existingUser) {
       return res.status(400).json({ message: "Email already in use" });
     }
@@ -30,7 +32,6 @@ exports.createUser = async (req, res) => {
     });
 
     await newUser.save();
-    // await redisClient.del("all_users"); 
     const token = jwt.sign(
       { userId: newUser._id, role: newUser.role,contact_no: newUser.contact_no, email: newUser.email},
       process.env.JWT_SECRET,
@@ -59,10 +60,6 @@ exports.login = async (req, res) => {
         .json({ message: "Email and password are required" });
     }
 
-    // let user = await redisClient.get(`user:${email}`);
-    // if (user) {
-    //   user = JSON.parse(user);
-    // } else {
       let user = await User.findOne({ email });
       if (!user) {
         return res.status(401).json({ error: "Invalid credentials" });

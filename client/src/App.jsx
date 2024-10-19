@@ -22,6 +22,7 @@ import {
 } from "./index";
 import ReservedSeats from "./Admin/ReservedSeats";
 import RoutesBoarding from "./components/Routes/RoutesBoarding";
+import BusBook from "./Admin/busBook";
 
 const Dashboard = () => <h2>Welcome to your Dashboard</h2>;
 
@@ -85,6 +86,10 @@ function AppRoutes() {
           <Route
             path="/center-management"
             element={<ProtectedRoute component={CenterManagement} />}
+          />
+          <Route
+            path="/busBook"
+            element={<ProtectedRoute component={BusBook} />}
           />
           <Route
             path="/your_trips"

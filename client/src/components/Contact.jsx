@@ -47,7 +47,7 @@ const Contact = () => {
             <div className="flex flex-wrap text-xl items-center">
               <Phone className="w-6 h-6 mr-3 text-blue-600" />
               <span>+91 7417582399, </span>
-              <span className="ml-8">+91 7668301226</span>
+              <span className="ml-8">+91 7017484754</span>
             </div>
             <div className="flex text-xl items-center">
               <MapPin className="w-6 h-6 mr-3 text-blue-600" />

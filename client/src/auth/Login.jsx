@@ -106,7 +106,7 @@ const Login = () => {
             <TextField
               label="Password"
               type="password"
-              {...register("password")} // Added password registration
+              {...register("password")} 
               error={Boolean(errors.password)}
               helperText={errors.password?.message}
               fullWidth

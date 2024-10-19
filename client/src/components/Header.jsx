@@ -149,6 +149,13 @@ const Header = () => {
                 <div className="border-b w-120"></div>
               </div>
             </ListItem>
+            <ListItem button onClick={() => handleNavigation("/busBook")}>
+              <ChevronRightIcon />
+              <div className="flex-col w-full">
+                <ListItemText primary="All Trips" />
+                <div className="border-b w-120"></div>
+              </div>
+            </ListItem>
             <ListItem
               button
               onClick={() => handleNavigation("/user-management")}
@@ -225,6 +232,12 @@ const Header = () => {
               </Button>
               {decoded.role === "admin" && (
                 <>
+                  <Button
+                    color="inherit"
+                    onClick={() => handleNavigation("/busBook")}
+                  >
+                    All Trips
+                  </Button>
                   <Button
                     color="inherit"
                     onClick={() => handleNavigation("/user-management")}

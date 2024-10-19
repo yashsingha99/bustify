@@ -7,10 +7,11 @@ const {
     deleteBooking,
     getAllBookings,
     getUserBooking,
-    getAllBusBookData
+    getAllBusBookData,
+    changeRefund,
+    createBusBookByAdmin
   } = require('../controllers/busBook.controllers');
 
-// Define routes
 router.post('/create', createBooking);
 router.get('/get/:id', getBookingById);
 router.patch('/update/:id', updateBooking);
@@ -18,5 +19,7 @@ router.delete('/delete/:id', deleteBooking);
 router.get('/getAllBookings', getAllBookings);
 router.get('/getUserBooking', getUserBooking);
 router.get('/getAllBusBookData', getAllBusBookData);
+router.post('/changeRefund', changeRefund);
+router.post('/createbusBookByadmin', createBusBookByAdmin);
 
 module.exports = router;

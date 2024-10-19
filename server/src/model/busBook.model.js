@@ -7,6 +7,10 @@ const busBookSchema = new mongoose.Schema(
       required: true,
       index: true, 
     },
+    isRefund:{
+      type: Boolean,
+      default: false
+    },
     bus: {
       type: String,
     },
