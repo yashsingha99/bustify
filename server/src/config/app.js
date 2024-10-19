@@ -47,4 +47,7 @@ app.use("/api/busBook", busBookRouter)
 const attendanceRouter = require("../routers/attendance.routes")
 app.use("/api/attendance", attendanceRouter)
 
+const orderRouter = require("../routers/order.routes")
+app.use("/api/order", orderRouter)
+
 module.exports = app
