@@ -165,9 +165,7 @@ const Booking = () => {
           <option value="Chhatikra">Chhatikra</option>
           <option value="Goverdhan chauraha">Goverdhan chauraha</option>
         </select>
-        <br/>
-        <input type="checkbox" id="qrWarning" style="transform: scale(1.5); margin-right: 0.5rem; cursor: pointer;" />
-        <label for="qrWarning">Please don't pay by QRCode in the next step</label>
+        
       </div>
       `,
       showCancelButton: true,
@@ -189,7 +187,7 @@ const Booking = () => {
       preConfirm: () => {
         const selectedDate = document.getElementById("dateSelect").value; // Get the selected date
         const pickupSelect = document.getElementById("pickupSelect").value; // Get the selected date
-        const checkbox = document.getElementById("qrWarning"); // Get the checkbox state
+        // const checkbox = document.getElementById("qrWarning"); // Get the checkbox state
 
         if (!selectedDate) {
           Swal.showValidationMessage("Please select a date.");
@@ -197,11 +195,11 @@ const Booking = () => {
         if (!pickupSelect) {
           Swal.showValidationMessage("Please select a pickup point.");
         }
-        if (!checkbox.checked) {
-          Swal.showValidationMessage(
-            "You must confirm, not to pay by QR code."
-          );
-        }
+        // if (!checkbox.checked) {
+        //   Swal.showValidationMessage(
+        //     "You must confirm, not to pay by QR code."
+        //   );
+        // }
 
         return { selectedDate };
       },
@@ -307,3 +305,7 @@ const Booking = () => {
 };
 
 export default Booking;
+
+// <br/>
+        // <input type="checkbox" id="qrWarning" style="transform: scale(1.5); margin-right: 0.5rem; cursor: pointer;" />
+        // <label for="qrWarning">Please don't pay by QRCode in the next step</label>
