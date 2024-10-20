@@ -213,57 +213,85 @@ const changeRefund = async (req, res) => {
 
 const createBusBookByAdmin = async (req, res) => {
   try {
-    const { email, contact_no, center, date, paymentId, pickup } = req.body;
-    
+    const { email, contact_no, center, date, paymentId, pickup, bus, seat } =
+      req.body;
+
+    if (!paymentId) {
+      return res.status(400).json({ message: "Payment ID is required" });
+    }
     const user = await User.findOne({
       $or: [{ contact_no }, { email }],
     });
-    
+    // console.log(user);
+
     if (!user) {
-      return res.status(400).json({ message: "User not found with these credentials" });
+      return res
+        .status(400)
+        .json({ message: "User not found with these credentials" });
     }
-    
-    // Find the center by ID
-    const isCenter = await Center.findById(center); 
+
+    const isCenter = await Center.findById(center);
     if (!isCenter) {
       return res.status(400).json({ message: "Center not found" });
     }
-    
-    const newBusBook = await BusBook.create({
-      pickup,
-      center: isCenter._id,
-      user: user._id,
-      paymentId,
-      date,
-    });
-    
-    if (!newBusBook) {
-      return res.status(400).json({ message: "Error creating new trip" });
-    }
-    
-    const addUser = await User.findByIdAndUpdate(user._id, {
-      $addToSet: { bookSchema: newBusBook._id },
-    });
-    
-    if (!addUser) {
-      return res.status(400).json({ message: "Error adding new bus booking to user" });
-    }
+    const isBusBook = await BusBook.findOne({ paymentId });
+    if (isBusBook) {
+      const newBusBook = await BusBook.findByIdAndUpdate(isBusBook._id, {
+        pickup,
+        // center: isCenter._id,
+        // user: user._id,
+        // paymentId,
+        date,
+        seat,
+        bus,
+      });
+      return res
+        .status(200)
+        .json({ message: "Your trip has been successfully updated" });
+    } else {
+      const newBusBook = await BusBook.create({
+        pickup,
+        center: isCenter._id,
+        user: user._id,
+        paymentId,
+        date,
+        seat,
+        bus,
+      });
 
-    const addCenter = await Center.findByIdAndUpdate(isCenter._id, {
-      $addToSet: { busBook: newBusBook._id },
-    });
-    
-    if (!addCenter) {
-      return res.status(400).json({ message: "Error adding new bus booking to center" });
+      if (!newBusBook) {
+        return res.status(400).json({ message: "Error creating new trip" });
+      }
+
+      const addUser = await User.findByIdAndUpdate(user._id, {
+        $addToSet: { bookSchema: newBusBook._id },
+      });
+
+      if (!addUser) {
+        return res
+          .status(400)
+          .json({ message: "Error adding new bus booking to user" });
+      }
+
+      const addCenter = await Center.findByIdAndUpdate(isCenter._id, {
+        $addToSet: { busBook: newBusBook._id },
+      });
+
+      if (!addCenter) {
+        return res
+          .status(400)
+          .json({ message: "Error adding new bus booking to center" });
+      }
+
+      return res
+        .status(200)
+        .json({ message: "Your trip has been successfully created" });
     }
-    
-    return res.status(200).json({ message: "Your trip has been successfully created" });
   } catch (error) {
-    console.error(error); 
+    console.error(error);
     return res.status(500).json({ message: "Internal server issue" });
   }
 };
-
 
 module.exports = {
   createBooking,

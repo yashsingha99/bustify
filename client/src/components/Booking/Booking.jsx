@@ -37,7 +37,7 @@ const Booking = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ amount: center.amount*100 }),
+        body: JSON.stringify({ amount: center.amount * 100 }),
       });
 
       const order = await response.json();
@@ -64,7 +64,7 @@ const Booking = () => {
                 razorpay_signature: response.razorpay_signature,
               }),
             });
-         
+
             // Changed
             const bookingData = {
               center: center._id,
@@ -244,11 +244,10 @@ const Booking = () => {
                         onClick={() => {
                           if (center.status === "active") handleBook(center);
                         }}
-                        className={`flex items-center mt-auto ${
-                          center.status === "unactive"
+                        className={`flex items-center mt-auto ${center.status === "unactive"
                             ? "bg-gray-500 "
                             : "bg-orange-500 hover:bg-orange-600"
-                        } text-white border-0 py-2 px-4 w-full mt-4 focus:outline-none rounded`}
+                          } text-white border-0 py-2 px-4 w-full mt-4 focus:outline-none rounded`}
                       >
                         {center.status === "unactive"
                           ? "Not Available  "
@@ -292,5 +291,5 @@ const Booking = () => {
 export default Booking;
 
 // <br/>
-        // <input type="checkbox" id="qrWarning" style="transform: scale(1.5); margin-right: 0.5rem; cursor: pointer;" />
-        // <label for="qrWarning">Please don't pay by QRCode in the next step</label>
+// <input type="checkbox" id="qrWarning" style="transform: scale(1.5); margin-right: 0.5rem; cursor: pointer;" />
+// <label for="qrWarning">Please don't pay by QRCode in the next step</label>

@@ -12,7 +12,7 @@ const busBookSchema = new mongoose.Schema(
       default: false
     },
     bus: {
-      type: String,
+      type: Number,
     },
     date: {
       type: String,
@@ -21,7 +21,7 @@ const busBookSchema = new mongoose.Schema(
       type: String,
     },
     seat: {
-      type: String,
+      type: Number,
     },
     center: {
       type: mongoose.Schema.Types.ObjectId,
