@@ -65,6 +65,7 @@ const Booking = () => {
               }),
             });
          
+            // Changed
             const bookingData = {
               center: center._id,
               paymentId: String(response.razorpay_payment_id),
