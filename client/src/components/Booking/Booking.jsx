@@ -66,21 +66,21 @@ const Booking = () => {
             });
             
             // handle capture
-            const res = await fetch(
-              `https://api.razorpay.com/v1/payments/${razorpay_payment_id}/capture`,
-              {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  amount: amount,
-                  currency: "INR",
-                }),
-              }
-            );
+            // const res = await fetch(
+            //   `https://api.razorpay.com/v1/payments/${razorpay_payment_id}/capture`,
+            //   {
+            //     method: "POST",
+            //     headers: {
+            //       "Content-Type": "application/json",
+            //     },
+            //     body: JSON.stringify({
+            //       amount: amount,
+            //       currency: "INR",
+            //     }),
+            //   }
+            // );
 
-            const result = await res.json();
+            // const result = await res.json();
 
             const bookingData = {
               center: center._id,
@@ -91,7 +91,7 @@ const Booking = () => {
             };
 
             const createBook = await createBooking(bookingData);
-            
+
             if (createBook.status === 201) {
               window.location.href = import.meta.env.VITE_WHATSAPP;
             } else {
