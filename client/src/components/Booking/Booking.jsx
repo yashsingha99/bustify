@@ -29,7 +29,7 @@ const Booking = () => {
   const userDetail = isAuthenticated ? jwtDecode(token) : null;
   const navigate = useNavigate();
 
-  const handlePayment = async (amount) => {
+  const handlePayment = async (center) => {
     try {
       // create order
       const response = await fetch(`${URI}/api/order/create-order`, {
@@ -37,7 +37,7 @@ const Booking = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ amount }),
+        body: JSON.stringify({ amount: center.amount*100 }),
       });
 
       const order = await response.json();
@@ -207,7 +207,7 @@ const Booking = () => {
       },
     }).then(async (result) => {
       if (result.isConfirmed) {
-        await handlePayment(center.amount);
+        await handlePayment(center);
       }
     });
   };

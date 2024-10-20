@@ -36,13 +36,14 @@ const verify_payment = async (req, res) => {
       .digest("hex");
 
     if (razorpay_signature === expectedSign) {
-      const res = await razorpay.payments.fetch(razorpay_payment_id);
-
+      const resp = await razorpay.payments.fetch(razorpay_payment_id);
+      console.log(resp)
       res.status(200).json({ message: "Payment verified successfully" });
     } else {
       res.status(400).json({ error: "Invalid payment signature" });
     }
   } catch (err) {
+    console.log(err)
     res.status(500).json({ error: err.message });
   }
 };
