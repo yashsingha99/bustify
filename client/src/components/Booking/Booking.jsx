@@ -31,6 +31,7 @@ const Booking = () => {
 
   const handlePayment = async (amount) => {
     try {
+      // create order
       const response = await fetch(`${URI}/api/order/create-order`, {
         method: "POST",
         headers: {
@@ -50,6 +51,7 @@ const Booking = () => {
         handler: async (response) => {
           try {
             const { razorpay_payment_id } = response;
+            //verify
             await fetch(`${URI}/api/order/verify_payment`, {
               method: "POST",
               headers: {
@@ -62,7 +64,8 @@ const Booking = () => {
                 razorpay_signature: response.razorpay_signature,
               }),
             });
-
+            
+            // handle capture
             const res = await fetch(
               `https://api.razorpay.com/v1/payments/${razorpay_payment_id}/capture`,
               {
@@ -88,6 +91,7 @@ const Booking = () => {
             };
 
             const createBook = await createBooking(bookingData);
+            
             if (createBook.status === 201) {
               window.location.href = import.meta.env.VITE_WHATSAPP;
             } else {
@@ -97,6 +101,7 @@ const Booking = () => {
                 "error"
               );
             }
+
             Cookies.remove("date");
             Cookies.remove("pickup");
           } catch (err) {
