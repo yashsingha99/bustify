@@ -213,27 +213,52 @@ const changeRefund = async (req, res) => {
 
 const createBusBookByAdmin = async (req, res) => {
   try {
-    const { email, contact_no, center, date, paymentId, pickup, bus, seat } =
+    const {name, email, contact_no, center, date, paymentId, pickup, bus, seat, password } =
       req.body;
 
-    if (!paymentId) {
-      return res.status(400).json({ message: "Payment ID is required" });
-    }
-    const user = await User.findOne({
-      $or: [{ contact_no }, { email }],
-    });
+      if (!paymentId) {
+        return res.status(400).json({ message: "Payment ID is required" });
+      }
+      
+      if (!center) {
+        return res.status(400).json({ message: "Center is required" });
+      }
+      
+      const user = await User.findOne({
+        $or: [{ contact_no }, { email }],
+      });
+      // console.log(user);
+
+      if(!user) {
+        const newUser = await User.create({
+          name,
+          contact_no,
+          email,
+          password
+        })
+        if(!newUser) {
+          res.status(500).json({message: "Error creating new user"})
+        }
+        user = newUser
+      }
+      
+    // const user = await User.findOne({
+    //   $or: [{ contact_no }, { email }],
+    // });
     // console.log(user);
 
-    if (!user) {
-      return res
-        .status(400)
-        .json({ message: "User not found with these credentials" });
-    }
+    // if (!user) {
+    //   return res
+    //     .status(400)
+    //     .json({ message: "User not found with these credentials" });
+    // }
 
     const isCenter = await Center.findById(center);
     if (!isCenter) {
       return res.status(400).json({ message: "Center not found" });
     }
+
+    // for the updation call
     const isBusBook = await BusBook.findOne({ paymentId });
     if (isBusBook) {
       const newBusBook = await BusBook.findByIdAndUpdate(isBusBook._id, {
@@ -258,7 +283,6 @@ const createBusBookByAdmin = async (req, res) => {
         seat,
         bus,
       });
-
       if (!newBusBook) {
         return res.status(400).json({ message: "Error creating new trip" });
       }
