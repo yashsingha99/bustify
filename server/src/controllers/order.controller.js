@@ -43,7 +43,7 @@ const verify_payment = async (req, res) => {
       res.status(400).json({ error: "Invalid payment signature" });
     }
   } catch (err) {
-    console.log(err)
+    console.log(err, "sccscc")
     res.status(500).json({ error: err.message });
   }
 };

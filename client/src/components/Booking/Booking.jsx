@@ -37,7 +37,7 @@ const Booking = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ amount: center.amount*100 }),
+        body: JSON.stringify({ amount: center.amount }),
       });
 
       const order = await response.json();
@@ -65,23 +65,6 @@ const Booking = () => {
               }),
             });
             
-            // handle capture
-            // const res = await fetch(
-            //   `https://api.razorpay.com/v1/payments/${razorpay_payment_id}/capture`,
-            //   {
-            //     method: "POST",
-            //     headers: {
-            //       "Content-Type": "application/json",
-            //     },
-            //     body: JSON.stringify({
-            //       amount: amount,
-            //       currency: "INR",
-            //     }),
-            //   }
-            // );
-
-            // const result = await res.json();
-
             const bookingData = {
               center: center._id,
               paymentId: String(response.razorpay_payment_id),
@@ -105,6 +88,7 @@ const Booking = () => {
             Cookies.remove("date");
             Cookies.remove("pickup");
           } catch (err) {
+            console.log(err)
             swal("Payment failed", "Please Try Again", "error");
           }
         },
