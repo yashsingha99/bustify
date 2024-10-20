@@ -37,7 +37,7 @@ const Booking = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ amount: center.amount }),
+        body: JSON.stringify({ amount: center.amount*100 }),
       });
 
       const order = await response.json();
