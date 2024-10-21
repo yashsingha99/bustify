@@ -224,7 +224,7 @@ const createBusBookByAdmin = async (req, res) => {
         return res.status(400).json({ message: "Center is required" });
       }
       
-      const user = await User.findOne({
+      let user = await User.findOne({
         $or: [{ contact_no }, { email }],
       });
       // console.log(user);
